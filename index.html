@@ -175,9 +175,13 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   font-family:'DM Sans',sans-serif;
   overflow:hidden;
 }
-.pdf-header{padding:24px 32px 16px;border-bottom:2px solid #F5D800;display:flex;align-items:flex-start;}
-.pdf-logo-area{display:flex;align-items:center;gap:0;}
-.pdf-logo-diamond{position:relative;width:48px;height:48px;}
+/* Header: logo officiel Colas Digital Solutions en haut à gauche */
+.pdf-header{
+  padding:20px 32px 14px;
+  display:flex;
+  align-items:flex-start;
+}
+.pdf-header-logo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
 .pdf-body{flex:1;padding:28px 32px;font-size:11px;color:#3D3D52;line-height:1.7;}
 .pdf-body h1{font-size:18px;font-weight:700;color:#3D3D52;margin-bottom:6px;margin-top:0;}
 .pdf-body h2{font-size:14px;font-weight:600;color:#3D3D52;margin:18px 0 6px;border-bottom:1px solid #E4E4EE;padding-bottom:4px;}
@@ -189,18 +193,80 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 .pdf-body table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
 .pdf-body table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
 .pdf-body table tr:nth-child(even) td{background:#FAFAFA;}
+/* Footer : url à gauche, numéro centré en bleu, déco jaune en bas à droite */
 .pdf-footer{
-  padding:10px 32px 14px;
+  padding:8px 32px 10px;
   display:flex;
   align-items:center;
   border-top:1px solid #E4E4EE;
   position:relative;
   overflow:hidden;
+  min-height:40px;
 }
-.pdf-footer-url{font-size:9px;color:#9B9BAE;font-family:'DM Sans',sans-serif;}
-.pdf-footer-page{font-size:9px;color:#9B9BAE;position:absolute;left:50%;transform:translateX(-50%);}
-.pdf-footer-deco{position:absolute;right:-10px;bottom:-4px;}
-.pdf-classification{font-size:8px;color:#9B9BAE;text-align:center;padding:4px 32px;background:#FAFAFA;border-top:1px solid #F0F0F0;letter-spacing:.3px;}
+.pdf-footer-url{font-size:9px;font-weight:700;color:#2C4965;font-family:'DM Sans',sans-serif;}
+.pdf-footer-page{font-size:10px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);}
+.pdf-footer-deco{position:absolute;right:-4px;bottom:-2px;}
+/* Classification : texte vert centré tout en bas */
+.pdf-classification{font-size:8px;color:#29CF00;text-align:center;padding:5px 32px 6px;background:var(--white);letter-spacing:.2px;border-top:1px solid #F0F0F0;}
+
+/* ── EDIT MODE ── */
+.edit-toolbar{
+  padding:8px 16px;
+  background:var(--bg);
+  border-bottom:1px solid var(--bd);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.edit-toolbar.hidden{display:none;}
+.edit-btn{
+  padding:4px 9px;
+  border-radius:5px;
+  font-size:12px;
+  font-family:var(--f);
+  font-weight:500;
+  border:1px solid var(--bd);
+  background:var(--white);
+  color:var(--grey);
+  cursor:pointer;
+  transition:all .12s;
+}
+.edit-btn:hover{border-color:var(--yellow);background:var(--yellow-light);}
+.edit-btn.active{background:var(--yellow);border-color:var(--yellow-dark);color:var(--grey);}
+.edit-sep{width:1px;height:18px;background:var(--bd);margin:0 2px;}
+.edit-select{
+  padding:4px 7px;
+  border-radius:5px;
+  font-size:12px;
+  font-family:var(--f);
+  border:1px solid var(--bd);
+  background:var(--white);
+  color:var(--grey);
+  cursor:pointer;
+  outline:none;
+}
+.edit-select:focus{border-color:var(--yellow);}
+[contenteditable="true"]{
+  outline:none;
+  cursor:text;
+}
+[contenteditable="true"]:focus{
+  background:rgba(245,216,0,.04);
+  border-radius:2px;
+}
+.edit-mode-on .pdf-page *[data-editable]{
+  cursor:text;
+}
+.edit-indicator{
+  font-size:11px;
+  color:var(--grey2);
+  padding:2px 8px;
+  background:rgba(245,216,0,.2);
+  border-radius:10px;
+  border:1px solid rgba(245,216,0,.5);
+  margin-left:auto;
+}
 
 /* ── TOKEN MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(30,30,40,.45);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
@@ -381,9 +447,41 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
       <span style="font-size:14px">📄</span>
       <span class="preview-header-title" id="previewTitle">Aperçu du document</span>
       <div class="preview-header-actions">
+        <button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEditMode()" style="font-size:12px;padding:6px 12px">✏️ Modifier</button>
         <button class="btn btn-primary" onclick="downloadPDF()" style="font-size:12px;padding:6px 12px">↓ PDF</button>
         <button class="btn btn-ghost" onclick="togglePreview()" style="font-size:12px;padding:6px 10px">✕</button>
       </div>
+    </div>
+    <!-- EDIT TOOLBAR -->
+    <div class="edit-toolbar hidden" id="editToolbar">
+      <button class="edit-btn" onclick="execCmd('bold')" title="Gras"><b>G</b></button>
+      <button class="edit-btn" onclick="execCmd('italic')" title="Italique"><i>I</i></button>
+      <button class="edit-btn" onclick="execCmd('underline')" title="Souligné"><u>S</u></button>
+      <div class="edit-sep"></div>
+      <select class="edit-select" onchange="execCmd('fontSize', this.value); this.value=''" title="Taille">
+        <option value="">Taille…</option>
+        <option value="1">8pt</option>
+        <option value="2">10pt</option>
+        <option value="3">12pt</option>
+        <option value="4">14pt</option>
+        <option value="5">18pt</option>
+        <option value="6">24pt</option>
+      </select>
+      <select class="edit-select" onchange="execCmd('foreColor', this.value); this.value=''" title="Couleur">
+        <option value="">Couleur…</option>
+        <option value="#3D3D52">Défaut</option>
+        <option value="#2C4965">Bleu Colas</option>
+        <option value="#F5D800">Jaune</option>
+        <option value="#E53E3E">Rouge</option>
+        <option value="#22C55E">Vert</option>
+      </select>
+      <div class="edit-sep"></div>
+      <button class="edit-btn" onclick="execCmd('justifyLeft')" title="Gauche">⬅</button>
+      <button class="edit-btn" onclick="execCmd('justifyCenter')" title="Centré">↔</button>
+      <button class="edit-btn" onclick="execCmd('justifyRight')" title="Droite">➡</button>
+      <div class="edit-sep"></div>
+      <button class="edit-btn" onclick="execCmd('insertUnorderedList')" title="Liste">☰</button>
+      <span class="edit-indicator">Mode édition activé — cliquez sur le texte pour modifier</span>
     </div>
     <div class="preview-scroll" id="previewScroll">
       <div style="text-align:center;padding:40px 20px;color:var(--grey3);font-size:13px;">
@@ -709,31 +807,44 @@ function buildPDFPage(doc){
   const page = document.createElement('div');
   page.className = 'pdf-page';
 
-  // Header
+  // Official Colas Digital Solutions logo (SVG matching the real logo)
+  const colasSVG = `<svg width="130" height="52" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Yellow shape left -->
+    <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
+    <!-- Red/dark arrow -->
+    <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
+    <!-- Yellow arrow right -->
+    <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
+    <!-- COLAS text -->
+    <text x="130" y="38" font-family="DM Sans,Arial,sans-serif" font-weight="900" font-size="36" fill="#3D3D52" letter-spacing="2">COLAS</text>
+    <!-- DIGITAL SOLUTIONS text -->
+    <text x="130" y="58" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
+  </svg>`;
+
+  // Footer decoration: two diagonal yellow lines (bottom right)
+  const footerDeco = `<svg width="72" height="50" viewBox="0 0 72 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/>
+    <line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/>
+  </svg>`;
+
   page.innerHTML = `
     <div class="pdf-header">
-      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-        <polygon points="26,4 48,26 26,48 4,26" fill="#F5D800"/>
-        <text x="26" y="28" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="800" font-size="9" fill="#3D3D52">COLAS</text>
-        <text x="26" y="38" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="4.5" fill="#3D3D52" letter-spacing="1">DIGITAL SOLUTIONS</text>
-      </svg>
+      <div class="pdf-header-logo">${colasSVG}</div>
     </div>
     <div class="pdf-body" id="pdfBodyContent"></div>
     <div class="pdf-footer">
       <span class="pdf-footer-url">www.colasdigitalsolutions.com</span>
       <span class="pdf-footer-page">01</span>
-      <svg class="pdf-footer-deco" width="80" height="36" viewBox="0 0 80 36" fill="none">
-        <line x1="80" y1="10" x2="20" y2="36" stroke="#F5D800" stroke-width="5" stroke-linecap="round"/>
-        <line x1="80" y1="22" x2="30" y2="44" stroke="#F5D800" stroke-width="3" stroke-linecap="round"/>
-      </svg>
+      <div class="pdf-footer-deco">${footerDeco}</div>
     </div>
-    <div class="pdf-classification">${doc.classification}</div>`;
+    <div class="pdf-classification">C2 - COLAS GROUP INTERNAL: Employees and partners who need to know.</div>`;
 
   const body = page.querySelector('#pdfBodyContent');
 
   // Title block
   const titleBlock = document.createElement('div');
   titleBlock.style.cssText = 'margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #F5D800;';
+  titleBlock.setAttribute('data-editable', '1');
   titleBlock.innerHTML = `
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9B9BAE;margin-bottom:6px;">${DOC_TYPE_LABELS[doc.docType] || doc.docType}</div>
     <h1 style="font-size:20px;font-weight:700;color:#3D3D52;margin:0 0 8px;">${doc.title}</h1>
@@ -747,6 +858,7 @@ function buildPDFPage(doc){
   doc.sections.forEach(section => {
     const sec = document.createElement('div');
     sec.style.marginBottom = '14px';
+    sec.setAttribute('data-editable', '1');
     const tag = section.level === 1 ? 'h2' : 'h3';
     sec.innerHTML = `<${tag} style="font-size:${section.level===1?'13':'11'}px;font-weight:700;color:#3D3D52;margin:0 0 6px;${section.level===1?'border-bottom:1px solid #E4E4EE;padding-bottom:4px;':''}">${section.title}</${tag}>${section.content}`;
     body.appendChild(sec);
