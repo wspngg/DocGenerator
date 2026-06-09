@@ -4,295 +4,195 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DocGenerator — Colas Digital Solutions</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --yellow:#F5D800;
-  --yellow-dark:#D4B800;
-  --yellow-light:#FFFDE7;
-  --grey:#3D3D52;
-  --grey2:#6B6B82;
-  --grey3:#9B9BAE;
-  --bg:#F7F7FA;
-  --white:#FFFFFF;
-  --bd:#E4E4EE;
-  --red:#E53E3E;
-  --green:#22C55E;
-  --f:'DM Sans',sans-serif;
-  --fm:'DM Mono',monospace;
+  --yellow:#F5D800;--yellow-dark:#D4B800;--yellow-light:#FFFDE7;
+  --grey:#3D3D52;--grey2:#6B6B82;--grey3:#9B9BAE;
+  --bg:#F4F4F8;--white:#FFFFFF;--bd:#E4E4EE;
+  --red:#E53E3E;--green:#22C55E;
+  --f:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
 }
 body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100vh;display:flex;flex-direction:column;}
 
-/* ── TOPBAR ── */
-.topbar{
-  background:var(--white);
-  border-bottom:1px solid var(--bd);
-  padding:0 28px;
-  height:56px;
-  display:flex;
-  align-items:center;
-  gap:16px;
-  position:sticky;top:0;z-index:100;
-}
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--bd);padding:0 24px;height:52px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;}
 .topbar-logo{display:flex;align-items:center;gap:10px;}
-.logo-diamond{width:32px;height:32px;}
-.logo-text{font-size:13px;font-weight:700;color:var(--grey);letter-spacing:.3px;}
-.logo-sub{font-size:10px;font-weight:500;color:var(--grey3);letter-spacing:1px;text-transform:uppercase;display:block;margin-top:-2px;}
-.topbar-div{width:1px;height:24px;background:var(--bd);margin:0 4px;}
-.topbar-title{font-size:13px;color:var(--grey2);font-weight:500;}
-.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.logo-diamond{width:30px;height:30px;}
+.logo-text{font-size:13px;font-weight:700;color:var(--grey);letter-spacing:.2px;}
+.logo-sub{font-size:10px;font-weight:500;color:var(--grey3);letter-spacing:.8px;text-transform:uppercase;display:block;margin-top:-2px;}
+.topbar-div{width:1px;height:22px;background:var(--bd);margin:0 2px;}
+.topbar-title{font-size:12px;color:var(--grey3);font-weight:500;letter-spacing:.3px;text-transform:uppercase;}
+.topbar-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
 
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
 .btn-primary{background:var(--yellow);color:var(--grey);}
 .btn-primary:hover{background:var(--yellow-dark);}
 .btn-secondary{background:var(--white);color:var(--grey2);border:1px solid var(--bd);}
 .btn-secondary:hover{border-color:var(--grey3);color:var(--grey);}
 .btn-ghost{background:transparent;color:var(--grey2);border:1px solid transparent;}
 .btn-ghost:hover{background:var(--bg);border-color:var(--bd);}
-.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ── LAYOUT ── */
-.app-body{display:flex;flex:1;height:calc(100vh - 56px);}
+/* LAYOUT */
+.app-body{display:flex;flex:1;height:calc(100vh - 52px);}
 
-/* ── SIDEBAR ── */
-.sidebar{
-  width:300px;flex-shrink:0;
-  background:var(--white);
-  border-right:1px solid var(--bd);
-  display:flex;flex-direction:column;
-  overflow:hidden;
-}
-.sidebar-section{padding:16px;border-bottom:1px solid var(--bd);}
-.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey3);margin-bottom:10px;}
+/* SIDEBAR */
+.sidebar{width:272px;flex-shrink:0;background:var(--white);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--bd);}
+.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey3);margin-bottom:8px;}
 
 /* Doc types */
-.doc-types{display:flex;flex-direction:column;gap:4px;}
-.doc-type{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:all .12s;border:1px solid transparent;}
+.doc-types{display:flex;flex-direction:column;gap:3px;}
+.doc-type{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .12s;border:1px solid transparent;}
 .doc-type:hover{background:var(--bg);}
-.doc-type.active{background:var(--yellow-light);border-color:rgba(245,216,0,.4);}
-.doc-type-icon{width:28px;height:28px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.doc-type.active .doc-type-icon{background:var(--yellow);}
-.doc-type-name{font-size:13px;font-weight:500;color:var(--grey);}
+.doc-type.active{background:var(--yellow-light);border-color:rgba(245,216,0,.5);}
+.doc-type-icon{width:26px;height:26px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--grey3);}
+.doc-type.active .doc-type-icon{background:var(--yellow);color:var(--grey);}
+.doc-type-name{font-size:12px;font-weight:500;color:var(--grey);}
 .doc-type-desc{font-size:11px;color:var(--grey3);margin-top:1px;}
 
 /* History */
-.history-list{display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;}
-.history-item{padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .12s;border:1px solid transparent;}
+.history-list{display:flex;flex-direction:column;gap:2px;max-height:200px;overflow-y:auto;}
+.history-item{padding:7px 10px;border-radius:6px;cursor:pointer;transition:all .12s;}
 .history-item:hover{background:var(--bg);}
 .history-item-title{font-size:12px;font-weight:500;color:var(--grey);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.history-item-meta{font-size:11px;color:var(--grey3);margin-top:2px;}
-.history-empty{font-size:12px;color:var(--grey3);text-align:center;padding:16px 0;}
+.history-item-meta{font-size:10px;color:var(--grey3);margin-top:2px;}
+.history-empty{font-size:12px;color:var(--grey3);text-align:center;padding:14px 0;font-style:italic;}
 
 /* Token */
-.token-status{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--bd);}
-.token-dot{width:7px;height:7px;border-radius:50%;background:var(--grey3);flex-shrink:0;}
+.token-status{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg);border-radius:7px;border:1px solid var(--bd);}
+.token-dot{width:6px;height:6px;border-radius:50%;background:var(--grey3);flex-shrink:0;}
 .token-dot.ok{background:var(--green);}
 .token-dot.err{background:var(--red);}
-.token-text{font-size:12px;color:var(--grey2);flex:1;}
-.token-btn{font-size:11px;padding:4px 8px;}
+.token-text{font-size:11px;color:var(--grey2);flex:1;}
 
-/* ── MAIN CHAT ── */
+/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.chat-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;}
+.chat-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;}
 
 /* Welcome */
-.welcome{text-align:center;padding:48px 24px;max-width:520px;margin:0 auto;}
-.welcome-icon{width:56px;height:56px;background:var(--yellow);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;}
-.welcome-title{font-size:22px;font-weight:700;color:var(--grey);margin-bottom:8px;}
-.welcome-sub{font-size:14px;color:var(--grey2);line-height:1.6;}
-.welcome-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;}
-.welcome-chip{background:var(--white);border:1px solid var(--bd);border-radius:20px;padding:7px 14px;font-size:12px;color:var(--grey2);cursor:pointer;transition:all .12s;}
-.welcome-chip:hover{border-color:var(--yellow);color:var(--grey);background:var(--yellow-light);}
+.welcome{text-align:center;padding:52px 24px;max-width:500px;margin:0 auto;}
+.welcome-mark{width:48px;height:48px;background:var(--yellow);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+.welcome-title{font-size:20px;font-weight:700;color:var(--grey);margin-bottom:8px;}
+.welcome-sub{font-size:13px;color:var(--grey2);line-height:1.65;}
+.welcome-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:20px;}
+.welcome-chip{background:var(--white);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:11px;color:var(--grey2);cursor:pointer;transition:all .12s;}
+.welcome-chip:hover{border-color:var(--yellow-dark);color:var(--grey);background:var(--yellow-light);}
 
 /* Messages */
-.msg{display:flex;gap:12px;max-width:780px;}
+.msg{display:flex;gap:10px;max-width:760px;}
 .msg.user{flex-direction:row-reverse;margin-left:auto;}
-.msg-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
-.msg.ai .msg-avatar{background:var(--yellow);color:var(--grey);}
-.msg.user .msg-avatar{background:var(--grey);color:var(--white);}
-.msg-bubble{background:var(--white);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;font-size:14px;line-height:1.65;color:var(--grey);}
+.msg-avatar{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.msg.ai .msg-avatar{background:var(--yellow);}
+.msg.user .msg-avatar{background:var(--grey);}
+.msg-bubble{background:var(--white);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;font-size:13px;line-height:1.65;color:var(--grey);}
 .msg.user .msg-bubble{background:var(--grey);color:var(--white);border-color:var(--grey);}
 .msg-bubble strong{font-weight:600;}
 .msg-bubble em{font-style:italic;color:var(--grey2);}
 
+/* Doc card */
+.doc-card{background:var(--bg);border:1px solid var(--bd);border-radius:9px;overflow:hidden;margin-top:10px;}
+.doc-card-header{padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:10px;}
+.doc-card-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--yellow);color:var(--grey);white-space:nowrap;flex-shrink:0;}
+.doc-card-title{font-size:12px;font-weight:600;color:var(--grey);}
+.doc-card-meta{font-size:10px;color:var(--grey3);margin-top:2px;}
+.doc-card-actions{padding:9px 14px;display:flex;gap:7px;}
+
 /* Thinking */
 .thinking-dots{display:flex;gap:4px;padding:4px 0;}
-.thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--grey3);animation:tdot 1.2s infinite;}
+.thinking-dots span{width:5px;height:5px;border-radius:50%;background:var(--grey3);animation:tdot 1.2s infinite;}
 .thinking-dots span:nth-child(2){animation-delay:.2s;}
 .thinking-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes tdot{0%,80%,100%{transform:scale(.8);opacity:.4;}40%{transform:scale(1);opacity:1;}}
 
-/* Doc preview card */
-.doc-card{background:var(--white);border:1px solid var(--bd);border-radius:12px;overflow:hidden;margin-top:8px;}
-.doc-card-header{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;}
-.doc-card-icon{width:32px;height:32px;background:var(--yellow);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;}
-.doc-card-title{font-size:13px;font-weight:600;color:var(--grey);}
-.doc-card-meta{font-size:11px;color:var(--grey3);margin-top:2px;}
-.doc-card-actions{padding:10px 16px;display:flex;gap:8px;}
-.doc-preview-btn{font-size:12px;padding:6px 12px;}
-
-/* ── INPUT ROW ── */
-.input-area{padding:16px 24px;border-top:1px solid var(--bd);background:var(--white);}
-.input-row{display:flex;gap:10px;align-items:flex-end;background:var(--bg);border:1.5px solid var(--bd);border-radius:12px;padding:8px 10px;transition:border-color .15s;}
+/* INPUT */
+.input-area{padding:14px 20px;border-top:1px solid var(--bd);background:var(--white);}
+.input-row{display:flex;gap:8px;align-items:flex-end;background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:7px 9px;transition:border-color .15s;}
 .input-row:focus-within{border-color:var(--yellow);}
-.mic-btn{width:36px;height:36px;border-radius:8px;background:var(--white);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--grey2);transition:all .15s;}
+.mic-btn{width:34px;height:34px;border-radius:7px;background:var(--white);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--grey2);transition:all .15s;}
 .mic-btn:hover{border-color:var(--yellow);color:var(--grey);}
-.mic-btn.recording{background:rgba(229,62,62,.08);border-color:var(--red);color:var(--red);animation:prec 1s infinite;}
+.mic-btn.recording{background:rgba(229,62,62,.07);border-color:var(--red);color:var(--red);animation:prec 1s infinite;}
 @keyframes prec{0%,100%{box-shadow:0 0 0 0 rgba(229,62,62,.3);}50%{box-shadow:0 0 0 5px rgba(229,62,62,0);}}
-.chat-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--f);font-size:14px;color:var(--grey);resize:none;max-height:120px;line-height:1.5;}
+.chat-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--f);font-size:13px;color:var(--grey);resize:none;max-height:120px;line-height:1.5;}
 .chat-input::placeholder{color:var(--grey3);}
-.send-btn{width:36px;height:36px;border-radius:8px;background:var(--yellow);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--grey);flex-shrink:0;transition:all .15s;}
+.send-btn{width:34px;height:34px;border-radius:7px;background:var(--yellow);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--grey);flex-shrink:0;transition:all .15s;}
 .send-btn:hover{background:var(--yellow-dark);}
 .send-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ── PREVIEW PANEL ── */
-.preview-panel{
-  width:420px;flex-shrink:0;
-  background:var(--bg);
-  border-left:1px solid var(--bd);
-  display:flex;flex-direction:column;
-  overflow:hidden;
-}
+/* PREVIEW PANEL */
+.preview-panel{width:440px;flex-shrink:0;background:var(--bg);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
 .preview-panel.hidden{display:none;}
-.preview-header{padding:14px 16px;border-bottom:1px solid var(--bd);background:var(--white);display:flex;align-items:center;gap:10px;}
-.preview-header-title{font-size:13px;font-weight:600;color:var(--grey);}
-.preview-header-actions{margin-left:auto;display:flex;gap:6px;}
+.preview-header{padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--white);display:flex;align-items:center;gap:8px;}
+.preview-header-title{font-size:12px;font-weight:600;color:var(--grey);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-header-actions{display:flex;gap:5px;flex-shrink:0;}
 .preview-scroll{flex:1;overflow-y:auto;padding:20px;}
 
-/* ── PDF PAGE ── */
-.pdf-page{
-  width:100%;
-  max-width:595px;
-  margin:0 auto;
-  background:var(--white);
-  box-shadow:0 4px 24px rgba(0,0,0,.1);
-  border-radius:4px;
-  min-height:842px;
-  position:relative;
-  display:flex;flex-direction:column;
-  font-family:'DM Sans',sans-serif;
-  overflow:hidden;
-}
-/* Header: logo officiel Colas Digital Solutions en haut à gauche */
-.pdf-header{
-  padding:20px 32px 14px;
-  display:flex;
-  align-items:flex-start;
-}
-.pdf-header-logo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
-.pdf-body{flex:1;padding:28px 32px;font-size:11px;color:#3D3D52;line-height:1.7;}
+/* EDIT TOOLBAR */
+.edit-toolbar{padding:7px 14px;background:var(--white);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.edit-toolbar.hidden{display:none;}
+.edit-btn{padding:4px 8px;border-radius:5px;font-size:12px;font-family:var(--f);font-weight:500;border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;transition:all .12s;}
+.edit-btn:hover{border-color:var(--yellow);background:var(--yellow-light);}
+.edit-btn.active{background:var(--yellow);border-color:var(--yellow-dark);}
+.edit-sep{width:1px;height:16px;background:var(--bd);margin:0 2px;}
+.edit-select{padding:4px 6px;border-radius:5px;font-size:11px;font-family:var(--f);border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;outline:none;}
+.edit-select:focus{border-color:var(--yellow);}
+.edit-indicator{font-size:10px;color:var(--grey2);padding:2px 8px;background:rgba(245,216,0,.18);border-radius:10px;border:1px solid rgba(245,216,0,.4);margin-left:auto;white-space:nowrap;}
+
+/* CONTENTEDITABLE */
+[contenteditable="true"]{outline:none;cursor:text;}
+[contenteditable="true"]:hover{background:rgba(245,216,0,.06);border-radius:2px;}
+[contenteditable="true"]:focus-within{background:rgba(245,216,0,.05);border-radius:2px;}
+
+/* PDF PAGE */
+.pdf-page{width:100%;max-width:595px;margin:0 auto;background:var(--white);box-shadow:0 3px 20px rgba(0,0,0,.09);border-radius:3px;min-height:842px;position:relative;display:flex;flex-direction:column;font-family:'DM Sans',sans-serif;overflow:hidden;}
+.pdf-header{padding:18px 28px 12px;display:flex;align-items:flex-start;border-bottom:2px solid #F5D800;}
+.pdf-header-logo{display:flex;flex-direction:column;align-items:flex-start;}
+.pdf-body{flex:1;padding:24px 28px;font-size:11px;color:#3D3D52;line-height:1.75;}
 .pdf-body h1{font-size:18px;font-weight:700;color:#3D3D52;margin-bottom:6px;margin-top:0;}
-.pdf-body h2{font-size:14px;font-weight:600;color:#3D3D52;margin:18px 0 6px;border-bottom:1px solid #E4E4EE;padding-bottom:4px;}
-.pdf-body h3{font-size:12px;font-weight:600;color:#3D3D52;margin:12px 0 4px;}
-.pdf-body p{margin-bottom:8px;}
-.pdf-body ul{margin:6px 0 10px 16px;}
-.pdf-body li{margin-bottom:3px;}
-.pdf-body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:10px;}
+.pdf-body h2{font-size:13px;font-weight:700;color:#3D3D52;margin:16px 0 5px;border-bottom:1px solid #E4E4EE;padding-bottom:4px;}
+.pdf-body h3{font-size:11px;font-weight:600;color:#3D3D52;margin:10px 0 3px;}
+.pdf-body p{margin-bottom:7px;}
+.pdf-body ul{margin:5px 0 8px 16px;}
+.pdf-body li{margin-bottom:2px;}
+.pdf-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px;}
 .pdf-body table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
 .pdf-body table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
 .pdf-body table tr:nth-child(even) td{background:#FAFAFA;}
-/* Footer : url à gauche, numéro centré en bleu, déco jaune en bas à droite */
-.pdf-footer{
-  padding:8px 32px 10px;
-  display:flex;
-  align-items:center;
-  border-top:1px solid #E4E4EE;
-  position:relative;
-  overflow:hidden;
-  min-height:40px;
-}
-.pdf-footer-url{font-size:9px;font-weight:700;color:#2C4965;font-family:'DM Sans',sans-serif;}
-.pdf-footer-page{font-size:10px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);}
+.pdf-footer{padding:7px 28px 9px;display:flex;align-items:center;border-top:1px solid #E4E4EE;position:relative;overflow:hidden;min-height:38px;}
+.pdf-footer-url{font-size:8px;font-weight:700;color:#2C4965;}
+.pdf-footer-page{font-size:9px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);}
 .pdf-footer-deco{position:absolute;right:-4px;bottom:-2px;}
-/* Classification : texte vert centré tout en bas */
-.pdf-classification{font-size:8px;color:#29CF00;text-align:center;padding:5px 32px 6px;background:var(--white);letter-spacing:.2px;border-top:1px solid #F0F0F0;}
+.pdf-classification{font-size:7.5px;color:#29CF00;text-align:center;padding:4px 28px 5px;background:#fff;letter-spacing:.2px;border-top:1px solid #F0F0F0;}
+.pdf-meta-row{display:flex;gap:14px;font-size:9px;color:#9B9BAE;align-items:center;}
+.pdf-meta-item{display:flex;align-items:center;gap:4px;}
 
-/* ── EDIT MODE ── */
-.edit-toolbar{
-  padding:8px 16px;
-  background:var(--bg);
-  border-bottom:1px solid var(--bd);
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.edit-toolbar.hidden{display:none;}
-.edit-btn{
-  padding:4px 9px;
-  border-radius:5px;
-  font-size:12px;
-  font-family:var(--f);
-  font-weight:500;
-  border:1px solid var(--bd);
-  background:var(--white);
-  color:var(--grey);
-  cursor:pointer;
-  transition:all .12s;
-}
-.edit-btn:hover{border-color:var(--yellow);background:var(--yellow-light);}
-.edit-btn.active{background:var(--yellow);border-color:var(--yellow-dark);color:var(--grey);}
-.edit-sep{width:1px;height:18px;background:var(--bd);margin:0 2px;}
-.edit-select{
-  padding:4px 7px;
-  border-radius:5px;
-  font-size:12px;
-  font-family:var(--f);
-  border:1px solid var(--bd);
-  background:var(--white);
-  color:var(--grey);
-  cursor:pointer;
-  outline:none;
-}
-.edit-select:focus{border-color:var(--yellow);}
-[contenteditable="true"]{
-  outline:none;
-  cursor:text;
-}
-[contenteditable="true"]:focus{
-  background:rgba(245,216,0,.04);
-  border-radius:2px;
-}
-.edit-mode-on .pdf-page *[data-editable]{
-  cursor:text;
-}
-.edit-indicator{
-  font-size:11px;
-  color:var(--grey2);
-  padding:2px 8px;
-  background:rgba(245,216,0,.2);
-  border-radius:10px;
-  border:1px solid rgba(245,216,0,.5);
-  margin-left:auto;
-}
+/* Preview empty */
+.preview-empty{text-align:center;padding:52px 20px;color:var(--grey3);font-size:12px;}
+.preview-empty-icon{width:40px;height:40px;background:var(--bd);border-radius:10px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;}
 
-/* ── TOKEN MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(30,30,40,.45);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
+/* TOKEN MODAL */
+.overlay{position:fixed;inset:0;background:rgba(30,30,40,.4);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
 .overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:16px;padding:28px;width:480px;box-shadow:0 20px 60px rgba(0,0,0,.15);}
-.modal-title{font-size:17px;font-weight:700;color:var(--grey);margin-bottom:6px;}
-.modal-sub{font-size:13px;color:var(--grey2);margin-bottom:20px;line-height:1.5;}
-.form-group{margin-bottom:16px;}
-.form-label{font-size:12px;font-weight:600;color:var(--grey2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.4px;}
-.form-input{width:100%;padding:10px 13px;border:1.5px solid var(--bd);border-radius:8px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;}
+.modal{background:var(--white);border-radius:14px;padding:26px;width:460px;box-shadow:0 16px 50px rgba(0,0,0,.14);}
+.modal-title{font-size:16px;font-weight:700;color:var(--grey);margin-bottom:5px;}
+.modal-sub{font-size:13px;color:var(--grey2);margin-bottom:18px;line-height:1.55;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:11px;font-weight:600;color:var(--grey2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px;}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;}
 .form-input:focus{border-color:var(--yellow);}
-.modal-note{background:var(--yellow-light);border:1px solid rgba(245,216,0,.4);border-radius:8px;padding:10px 12px;font-size:12px;color:#7A6200;margin-bottom:16px;}
+.modal-note{background:var(--yellow-light);border:1px solid rgba(245,216,0,.4);border-radius:7px;padding:9px 12px;font-size:12px;color:#7A6200;margin-bottom:14px;line-height:1.5;}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:10px;}
 
-/* ── PRINT / PDF EXPORT ── */
-@media print{
-  .topbar,.sidebar,.input-area,.preview-panel,.chat-area,.main{display:none!important;}
-  .print-target{display:block!important;}
-  body{background:white;}
-}
-.print-target{display:none;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -300,16 +200,16 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 <!-- TOKEN MODAL -->
 <div class="overlay" id="tokenOverlay">
   <div class="modal">
-    <div class="modal-title">🔑 Configurer le token GitHub Models</div>
+    <div class="modal-title">Configurer le token GitHub Models</div>
     <div class="modal-sub">Entrez votre Personal Access Token GitHub pour activer la génération IA. Il est stocké uniquement dans votre navigateur.</div>
     <div class="form-group">
       <label class="form-label">GitHub Personal Access Token</label>
       <input class="form-input" id="tokenInput" type="password" placeholder="github_pat_XXXXXXXXXXXX..." autocomplete="off"/>
     </div>
-    <div class="modal-note">💡 Créez un token sur <strong>github.com/settings/tokens</strong> avec la permission <strong>Account → Models → Read-only</strong></div>
+    <div class="modal-note">Créez un token sur <strong>github.com/settings/tokens</strong> avec la permission <strong>Account &rarr; Models &rarr; Read-only</strong>.</div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeTokenModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="saveToken()">Enregistrer →</button>
+      <button class="btn btn-primary" onclick="saveToken()">Enregistrer</button>
     </div>
   </div>
 </div>
@@ -317,9 +217,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">
-    <svg class="logo-diamond" viewBox="0 0 32 32" fill="none">
-      <polygon points="16,2 30,16 16,30 2,16" fill="#F5D800"/>
-      <text x="16" y="20" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="800" font-size="8" fill="#3D3D52">COLAS</text>
+    <svg class="logo-diamond" viewBox="0 0 30 30" fill="none">
+      <polygon points="15,2 28,15 15,28 2,15" fill="#F5D800"/>
+      <text x="15" y="19" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="800" font-size="7" fill="#3D3D52">CDS</text>
     </svg>
     <div>
       <div class="logo-text">DocGenerator</div>
@@ -329,9 +229,18 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   <div class="topbar-div"></div>
   <span class="topbar-title" id="currentDocType">Rapport technique</span>
   <div class="topbar-right">
-    <button class="btn btn-secondary" id="previewToggleBtn" onclick="togglePreview()" style="font-size:12px">👁 Aperçu</button>
-    <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="font-size:12px;display:none">↓ PDF</button>
-    <button class="btn btn-ghost" onclick="openTokenModal()" style="font-size:12px">⚙ Token</button>
+    <button class="btn btn-secondary" id="previewToggleBtn" onclick="togglePreview()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+      Aperçu
+    </button>
+    <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
+      Télécharger PDF
+    </button>
+    <button class="btn btn-ghost" onclick="openTokenModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
+      Token
+    </button>
   </div>
 </div>
 
@@ -342,48 +251,37 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
     <div class="sidebar-section">
       <div class="sidebar-label">Type de document</div>
       <div class="doc-types" id="docTypes">
+
         <div class="doc-type active" data-type="rapport" onclick="selectDocType(this)">
-          <div class="doc-type-icon">📊</div>
-          <div>
-            <div class="doc-type-name">Rapport technique</div>
-            <div class="doc-type-desc">Analyse, bilan, audit</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Rapport technique</div><div class="doc-type-desc">Analyse, bilan, audit</div></div>
         </div>
+
         <div class="doc-type" data-type="procedure" onclick="selectDocType(this)">
-          <div class="doc-type-icon">📋</div>
-          <div>
-            <div class="doc-type-name">Procédure</div>
-            <div class="doc-type-desc">Étapes, protocole</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/><line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2"/><line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2"/><line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Procédure</div><div class="doc-type-desc">Étapes, protocole</div></div>
         </div>
+
         <div class="doc-type" data-type="note" onclick="selectDocType(this)">
-          <div class="doc-type-icon">📝</div>
-          <div>
-            <div class="doc-type-name">Note de service</div>
-            <div class="doc-type-desc">Information interne</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Note de service</div><div class="doc-type-desc">Information interne</div></div>
         </div>
+
         <div class="doc-type" data-type="cr" onclick="selectDocType(this)">
-          <div class="doc-type-icon">🗒️</div>
-          <div>
-            <div class="doc-type-name">Compte-rendu</div>
-            <div class="doc-type-desc">Réunion, visite terrain</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Compte-rendu</div><div class="doc-type-desc">Réunion, visite terrain</div></div>
         </div>
+
         <div class="doc-type" data-type="spec" onclick="selectDocType(this)">
-          <div class="doc-type-icon">⚙️</div>
-          <div>
-            <div class="doc-type-name">Spécification</div>
-            <div class="doc-type-desc">Cahier des charges</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Spécification</div><div class="doc-type-desc">Cahier des charges</div></div>
         </div>
+
         <div class="doc-type" data-type="guide" onclick="selectDocType(this)">
-          <div class="doc-type-icon">📖</div>
-          <div>
-            <div class="doc-type-name">Guide utilisateur</div>
-            <div class="doc-type-desc">Manuel, tutoriel</div>
-          </div>
+          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" stroke="currentColor" stroke-width="2"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="doc-type-name">Guide utilisateur</div><div class="doc-type-desc">Manuel, tutoriel</div></div>
         </div>
+
       </div>
     </div>
 
@@ -399,7 +297,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
       <div class="token-status">
         <div class="token-dot" id="tokenDot"></div>
         <span class="token-text" id="tokenText">Token non configuré</span>
-        <button class="btn btn-ghost token-btn" onclick="openTokenModal()">Configurer</button>
+        <button class="btn btn-ghost" style="font-size:11px;padding:4px 8px" onclick="openTokenModal()">Configurer</button>
       </div>
     </div>
   </div>
@@ -408,34 +306,32 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   <div class="main">
     <div class="chat-area" id="chatArea">
       <div class="welcome" id="welcomeMsg">
-        <div class="welcome-icon">✦</div>
-        <div class="welcome-title">Bienvenue sur DocGenerator</div>
-        <div class="welcome-sub">Décrivez le document que vous souhaitez créer en langage naturel. L'IA génère un document professionnel au format Colas Digital Solutions, prêt à télécharger en PDF.</div>
+        <div class="welcome-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>
+        </div>
+        <div class="welcome-title">DocGenerator</div>
+        <div class="welcome-sub">Décrivez le document que vous souhaitez créer. L'IA génère un document professionnel au format Colas Digital Solutions, prêt à télécharger en PDF.</div>
         <div class="welcome-chips">
-          <span class="welcome-chip" onclick="useChip(this)">Rapport d'audit réseau pour le site de Lyon</span>
-          <span class="welcome-chip" onclick="useChip(this)">Procédure d'installation d'un switch Cisco</span>
-          <span class="welcome-chip" onclick="useChip(this)">Note de service sur la politique de mots de passe</span>
-          <span class="welcome-chip" onclick="useChip(this)">Compte-rendu de réunion projet infrastructure</span>
-          <span class="welcome-chip" onclick="useChip(this)">Guide utilisateur pour l'outil SchémaFlow</span>
+          <span class="welcome-chip" onclick="useChip(this)">Rapport d'audit réseau, site de Lyon</span>
+          <span class="welcome-chip" onclick="useChip(this)">Procédure d'installation switch Cisco</span>
+          <span class="welcome-chip" onclick="useChip(this)">Note de service politique mots de passe</span>
+          <span class="welcome-chip" onclick="useChip(this)">Compte-rendu réunion projet infrastructure</span>
+          <span class="welcome-chip" onclick="useChip(this)">Guide utilisateur SchémaFlow</span>
         </div>
       </div>
     </div>
 
     <div class="input-area">
       <div class="input-row">
-        <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Dicter par microphone">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/>
-            <path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+        <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Dicter">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
         <textarea class="chat-input" id="chatInput" rows="1"
           placeholder="Ex : Génère un rapport technique sur la sécurité réseau du site de Marseille…"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"
           oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Envoyer">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l2.5 6L2 14l12-6z" fill="currentColor"/></svg>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l2.5 6L2 14l12-6z" fill="currentColor"/></svg>
         </button>
       </div>
     </div>
@@ -444,31 +340,35 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   <!-- PREVIEW PANEL -->
   <div class="preview-panel hidden" id="previewPanel">
     <div class="preview-header">
-      <span style="font-size:14px">📄</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="color:var(--grey3);flex-shrink:0"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/></svg>
       <span class="preview-header-title" id="previewTitle">Aperçu du document</span>
       <div class="preview-header-actions">
-        <button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEditMode()" style="font-size:12px;padding:6px 12px">✏️ Modifier</button>
-        <button class="btn btn-primary" onclick="downloadPDF()" style="font-size:12px;padding:6px 12px">↓ PDF</button>
-        <button class="btn btn-ghost" onclick="togglePreview()" style="font-size:12px;padding:6px 10px">✕</button>
+        <button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEditMode()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/></svg>
+          Modifier
+        </button>
+        <button class="btn btn-primary" onclick="downloadPDF()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
+          PDF
+        </button>
+        <button class="btn btn-ghost" onclick="togglePreview()" style="padding:6px 8px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
       </div>
     </div>
-    <!-- EDIT TOOLBAR -->
+
     <div class="edit-toolbar hidden" id="editToolbar">
-      <button class="edit-btn" onclick="execCmd('bold')" title="Gras"><b>G</b></button>
-      <button class="edit-btn" onclick="execCmd('italic')" title="Italique"><i>I</i></button>
-      <button class="edit-btn" onclick="execCmd('underline')" title="Souligné"><u>S</u></button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('bold')"><b>G</b></button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('italic')"><i>I</i></button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('underline')"><u>S</u></button>
       <div class="edit-sep"></div>
-      <select class="edit-select" onchange="execCmd('fontSize', this.value); this.value=''" title="Taille">
-        <option value="">Taille…</option>
-        <option value="1">8pt</option>
-        <option value="2">10pt</option>
-        <option value="3">12pt</option>
-        <option value="4">14pt</option>
-        <option value="5">18pt</option>
-        <option value="6">24pt</option>
+      <select class="edit-select" onchange="fmtCmd('fontSize',this.value);this.value=''">
+        <option value="">Taille</option>
+        <option value="1">8pt</option><option value="2">10pt</option><option value="3">12pt</option>
+        <option value="4">14pt</option><option value="5">18pt</option><option value="6">24pt</option>
       </select>
-      <select class="edit-select" onchange="execCmd('foreColor', this.value); this.value=''" title="Couleur">
-        <option value="">Couleur…</option>
+      <select class="edit-select" onchange="fmtCmd('foreColor',this.value);this.value=''">
+        <option value="">Couleur</option>
         <option value="#3D3D52">Défaut</option>
         <option value="#2C4965">Bleu Colas</option>
         <option value="#F5D800">Jaune</option>
@@ -476,24 +376,22 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
         <option value="#22C55E">Vert</option>
       </select>
       <div class="edit-sep"></div>
-      <button class="edit-btn" onclick="execCmd('justifyLeft')" title="Gauche">⬅</button>
-      <button class="edit-btn" onclick="execCmd('justifyCenter')" title="Centré">↔</button>
-      <button class="edit-btn" onclick="execCmd('justifyRight')" title="Droite">➡</button>
-      <div class="edit-sep"></div>
-      <button class="edit-btn" onclick="execCmd('insertUnorderedList')" title="Liste">☰</button>
-      <span class="edit-indicator">Mode édition activé — cliquez sur le texte pour modifier</span>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyLeft')" title="Aligner à gauche">&#8676;</button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyCenter')" title="Centrer">&#8677;</button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('insertUnorderedList')" title="Liste">&#8285;</button>
+      <span class="edit-indicator">Mode édition — cliquez dans le document pour modifier</span>
     </div>
+
     <div class="preview-scroll" id="previewScroll">
-      <div style="text-align:center;padding:40px 20px;color:var(--grey3);font-size:13px;">
-        <div style="font-size:32px;margin-bottom:12px;">📄</div>
+      <div class="preview-empty">
+        <div class="preview-empty-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#9B9BAE" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#9B9BAE" stroke-width="2"/></svg>
+        </div>
         Générez un document pour voir l'aperçu
       </div>
     </div>
   </div>
 </div>
-
-<!-- HIDDEN PRINT TARGET -->
-<div class="print-target" id="printTarget"></div>
 
 <script>
 // ── State ──
@@ -504,49 +402,37 @@ let docHistory = [];
 let isRecording = false;
 let recognition = null;
 let previewVisible = false;
+let editMode = false;
+// Saved selection for toolbar commands
+let savedRange = null;
 
 const DOC_TYPE_LABELS = {
-  rapport: 'Rapport technique',
-  procedure: 'Procédure',
-  note: 'Note de service',
-  cr: 'Compte-rendu',
-  spec: 'Spécification',
-  guide: 'Guide utilisateur'
+  rapport:'Rapport technique', procedure:'Procédure', note:'Note de service',
+  cr:'Compte-rendu', spec:'Spécification', guide:'Guide utilisateur'
 };
 
 // ── Token ──
 function getToken(){ return localStorage.getItem('docgen_gh_token') || ''; }
-
 function saveToken(){
   const t = document.getElementById('tokenInput').value.trim();
   if(!t){ alert('Token vide !'); return; }
   localStorage.setItem('docgen_gh_token', t);
   closeTokenModal();
   updateTokenStatus();
-  addMessage('ai', '✅ Token enregistré ! Je suis prêt à générer vos documents Colas Digital Solutions.');
+  addMessage('ai', 'Token enregistré. Vous pouvez maintenant générer des documents.');
 }
-
 function openTokenModal(){
   const t = getToken();
   if(t) document.getElementById('tokenInput').value = t;
   document.getElementById('tokenOverlay').classList.add('show');
 }
-
-function closeTokenModal(){
-  document.getElementById('tokenOverlay').classList.remove('show');
-}
-
+function closeTokenModal(){ document.getElementById('tokenOverlay').classList.remove('show'); }
 function updateTokenStatus(){
   const t = getToken();
   const dot = document.getElementById('tokenDot');
   const text = document.getElementById('tokenText');
-  if(t){
-    dot.className = 'token-dot ok';
-    text.textContent = 'IA active (GitHub Models)';
-  } else {
-    dot.className = 'token-dot err';
-    text.textContent = 'Token non configuré';
-  }
+  if(t){ dot.className='token-dot ok'; text.textContent='IA active (GitHub Models)'; }
+  else { dot.className='token-dot err'; text.textContent='Token non configuré'; }
 }
 
 // ── Doc type ──
@@ -560,67 +446,48 @@ function selectDocType(el){
 // ── Mic ──
 function toggleMic(){
   if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-    alert('Votre navigateur ne supporte pas la reconnaissance vocale.\nUtilisez Chrome ou Edge.');
-    return;
+    alert('Reconnaissance vocale non supportée. Utilisez Chrome ou Edge.'); return;
   }
   if(isRecording){ recognition.stop(); return; }
-
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
-  recognition.lang = 'fr-FR';
-  recognition.continuous = false;
-  recognition.interimResults = true;
-
+  recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = true;
   const micBtn = document.getElementById('micBtn');
   const input = document.getElementById('chatInput');
-
-  recognition.onstart = () => {
-    isRecording = true;
-    micBtn.classList.add('recording');
-    input.placeholder = '🎤 Dictez votre demande…';
-  };
+  recognition.onstart = () => { isRecording=true; micBtn.classList.add('recording'); input.placeholder='Dictez votre demande…'; };
   recognition.onresult = (e) => {
-    let t = '';
-    for(let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-    input.value = t;
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript;
+    input.value=t; input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,120)+'px';
   };
   recognition.onend = () => {
-    isRecording = false;
-    micBtn.classList.remove('recording');
-    input.placeholder = 'Ex : Génère un rapport technique sur la sécurité réseau du site de Marseille…';
+    isRecording=false; micBtn.classList.remove('recording');
+    input.placeholder='Ex : Génère un rapport technique sur la sécurité réseau du site de Marseille…';
     if(input.value.trim()) sendMessage();
   };
-  recognition.onerror = (e) => {
-    isRecording = false;
-    micBtn.classList.remove('recording');
-    if(e.error === 'not-allowed') alert('Accès au microphone refusé.');
-  };
+  recognition.onerror = (e) => { isRecording=false; micBtn.classList.remove('recording'); if(e.error==='not-allowed') alert('Accès au microphone refusé.'); };
   recognition.start();
 }
 
 // ── Chat ──
-function addMessage(role, html, extraNode = null){
+function addMessage(role, html, extraNode=null){
   const welcome = document.getElementById('welcomeMsg');
   if(welcome) welcome.remove();
-
   const area = document.getElementById('chatArea');
   const div = document.createElement('div');
-  div.className = 'msg ' + role;
-
+  div.className = 'msg '+role;
   const avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = role === 'user' ? '👤' : '✦';
-
+  if(role==='user'){
+    avatar.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="white" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="white" stroke-width="2"/></svg>`;
+  } else {
+    avatar.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>`;
+  }
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
   bubble.innerHTML = html;
   if(extraNode) bubble.appendChild(extraNode);
-
-  if(role === 'user'){ div.appendChild(bubble); div.appendChild(avatar); }
+  if(role==='user'){ div.appendChild(bubble); div.appendChild(avatar); }
   else { div.appendChild(avatar); div.appendChild(bubble); }
-
   area.appendChild(div);
   area.scrollTop = area.scrollHeight;
   return bubble;
@@ -629,21 +496,16 @@ function addMessage(role, html, extraNode = null){
 function addThinking(){
   const area = document.getElementById('chatArea');
   const div = document.createElement('div');
-  div.className = 'msg ai'; div.id = 'thinkingMsg';
-  div.innerHTML = `<div class="msg-avatar" style="background:var(--yellow);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">✦</div><div class="msg-bubble"><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
-  area.appendChild(div);
-  area.scrollTop = area.scrollHeight;
+  div.className='msg ai'; div.id='thinkingMsg';
+  const av = document.createElement('div'); av.className='msg-avatar'; av.style.background='var(--yellow)';
+  av.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>`;
+  const bub = document.createElement('div'); bub.className='msg-bubble';
+  bub.innerHTML=`<div class="thinking-dots"><span></span><span></span><span></span></div>`;
+  div.appendChild(av); div.appendChild(bub);
+  area.appendChild(div); area.scrollTop=area.scrollHeight;
 }
-
-function removeThinking(){
-  const el = document.getElementById('thinkingMsg');
-  if(el) el.remove();
-}
-
-function useChip(el){
-  document.getElementById('chatInput').value = el.textContent;
-  document.getElementById('chatInput').focus();
-}
+function removeThinking(){ const el=document.getElementById('thinkingMsg'); if(el) el.remove(); }
+function useChip(el){ document.getElementById('chatInput').value=el.textContent; document.getElementById('chatInput').focus(); }
 
 // ── System prompt ──
 const SYSTEM_PROMPT = `Tu es DocGenerator, un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
@@ -660,52 +522,39 @@ Quand l'utilisateur demande un document, réponds UNIQUEMENT avec un JSON (sans 
     {
       "title": "Titre de section",
       "level": 1,
-      "content": "Contenu HTML simple de la section (utilise <p>, <ul><li>, <strong>, <em>, <table>)"
+      "content": "Contenu HTML simple (<p>, <ul><li>, <strong>, <em>, <table>)"
     }
   ],
-  "message": "Message convivial décrivant ce qui a été généré"
+  "message": "Message court décrivant ce qui a été généré"
 }
 
-Règles de contenu :
-- Rédige en français professionnel, ton technique et précis
-- Pour un rapport : intro/contexte, analyse/constats, recommandations, conclusion
-- Pour une procédure : objectif, prérequis, étapes numérotées, vérification
-- Pour une note : objet, destinataires, corps, actions requises
-- Pour un compte-rendu : participants, ordre du jour, points abordés, décisions, actions
-- Pour une spécification : contexte, exigences fonctionnelles, exigences techniques, critères de validation
-- Pour un guide : introduction, prérequis, étapes détaillées, dépannage
-- Génère un contenu complet, professionnel et réaliste (pas de placeholder)
-- Minimum 4 sections substantielles
-- Utilise des tableaux quand c'est pertinent
+Règles :
+- Français professionnel, ton technique et précis
+- Rapport : intro/contexte, analyse/constats, recommandations, conclusion
+- Procédure : objectif, prérequis, étapes numérotées, vérification
+- Note : objet, destinataires, corps, actions requises
+- Compte-rendu : participants, ordre du jour, points abordés, décisions, actions
+- Spécification : contexte, exigences fonctionnelles, exigences techniques, critères de validation
+- Guide : introduction, prérequis, étapes détaillées, dépannage
+- Contenu complet et réaliste, minimum 4 sections substantielles
+- Tableaux quand pertinent
 
-Pour les questions générales ou demandes de modification, réponds :
-{"type":"chat","message":"ta réponse en HTML simple"}`;
+Pour les questions générales :
+{"type":"chat","message":"réponse HTML simple"}`;
 
 async function callGPT(userMsg){
   const token = getToken();
   if(!token) throw new Error('NO_TOKEN');
-
-  chatHistory.push({ role: 'user', content: userMsg });
-
+  chatHistory.push({role:'user',content:userMsg});
   const res = await fetch('https://models.inference.ai.azure.com/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...chatHistory],
-      max_tokens: 3000,
-      temperature: 0.4
-    })
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+    body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:SYSTEM_PROMPT},...chatHistory],max_tokens:3000,temperature:0.4})
   });
-
-  if(!res.ok){
-    const err = await res.json().catch(() => ({ error: { message: res.statusText } }));
-    throw new Error(err.error?.message || `Erreur ${res.status}`);
-  }
-
+  if(!res.ok){ const err=await res.json().catch(()=>({error:{message:res.statusText}})); throw new Error(err.error?.message||`Erreur ${res.status}`); }
   const data = await res.json();
   const reply = data.choices[0].message.content.trim();
-  chatHistory.push({ role: 'assistant', content: reply });
+  chatHistory.push({role:'assistant',content:reply});
   return reply;
 }
 
@@ -713,74 +562,62 @@ async function sendMessage(){
   const input = document.getElementById('chatInput');
   const msg = input.value.trim();
   if(!msg) return;
-
-  input.value = ''; input.style.height = 'auto';
-  document.getElementById('sendBtn').disabled = true;
-
+  input.value=''; input.style.height='auto';
+  document.getElementById('sendBtn').disabled=true;
   addMessage('user', msg.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'));
   addThinking();
-
   if(!getToken()){
     removeThinking();
-    addMessage('ai', '⚠️ Token non configuré. Cliquez sur <strong>⚙ Token</strong> en haut à droite pour configurer votre GitHub Personal Access Token.');
-    document.getElementById('sendBtn').disabled = false;
+    addMessage('ai','Token non configuré. Cliquez sur <strong>Token</strong> en haut à droite pour le configurer.');
+    document.getElementById('sendBtn').disabled=false;
     return;
   }
-
   try {
     const reply = await callGPT(msg);
     removeThinking();
-
-    let parsed = null;
-    try {
-      parsed = JSON.parse(reply.replace(/```json|```/g,'').trim());
-    } catch(e) {
-      addMessage('ai', reply);
-      document.getElementById('sendBtn').disabled = false;
-      return;
-    }
-
-    if(parsed.type === 'document'){
-      generatedDoc = parsed;
-      addMessage('ai', parsed.message || 'Document généré avec succès ! ✅', makeDocCard(parsed));
+    let parsed=null;
+    try{ parsed=JSON.parse(reply.replace(/```json|```/g,'').trim()); }
+    catch(e){ addMessage('ai',reply); document.getElementById('sendBtn').disabled=false; return; }
+    if(parsed.type==='document'){
+      generatedDoc=parsed;
+      addMessage('ai', parsed.message||'Document généré avec succès.', makeDocCard(parsed));
       renderPreview(parsed);
       addToHistory(parsed);
-      document.getElementById('downloadBtn').style.display = '';
+      document.getElementById('downloadBtn').style.display='';
       if(!previewVisible) togglePreview();
     } else {
-      addMessage('ai', parsed.message || reply);
+      addMessage('ai', parsed.message||reply);
     }
-
   } catch(err){
     removeThinking();
-    if(err.message === 'NO_TOKEN'){
-      addMessage('ai', '⚠️ Token non configuré. Cliquez sur <strong>⚙ Token</strong>.');
-    } else if(err.message.includes('401') || err.message.includes('403')){
-      addMessage('ai', '❌ Token invalide ou expiré. Recréez un token sur <em>github.com/settings/tokens</em> et mettez-le à jour via <strong>⚙ Token</strong>.');
-    } else if(err.message.includes('429')){
-      addMessage('ai', '⏳ Limite de requêtes atteinte. Attendez quelques secondes et réessayez.');
-    } else {
-      addMessage('ai', `❌ Erreur : ${err.message}`);
-    }
+    if(err.message==='NO_TOKEN') addMessage('ai','Token non configuré. Cliquez sur <strong>Token</strong>.');
+    else if(err.message.includes('401')||err.message.includes('403')) addMessage('ai','Token invalide ou expiré. Recréez un token sur <em>github.com/settings/tokens</em>.');
+    else if(err.message.includes('429')) addMessage('ai','Limite de requêtes atteinte. Attendez quelques secondes et réessayez.');
+    else addMessage('ai',`Erreur : ${err.message}`);
   }
-
-  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').disabled=false;
 }
 
 function makeDocCard(doc){
   const div = document.createElement('div');
-  div.className = 'doc-card';
-  div.innerHTML = `
+  div.className='doc-card';
+  div.innerHTML=`
     <div class="doc-card-header">
-      <div class="doc-card-icon">📄</div>
-      <div>
+      <span class="doc-card-badge">${DOC_TYPE_LABELS[doc.docType]||doc.docType}</span>
+      <div style="flex:1;min-width:0">
         <div class="doc-card-title">${doc.title}</div>
-        <div class="doc-card-meta">${DOC_TYPE_LABELS[doc.docType] || doc.docType} · ${doc.date} · ${doc.sections.length} sections</div>
+        <div class="doc-card-meta">${doc.date} &middot; ${doc.sections.length} sections</div>
       </div>
     </div>
     <div class="doc-card-actions">
-      <button class="btn btn-primary doc-preview-btn" onclick="togglePreview()">👁 Aperçu</button>
-      <button class="btn btn-secondary doc-preview-btn" onclick="downloadPDF()">↓ Télécharger PDF</button>
+      <button class="btn btn-secondary" onclick="if(!previewVisible)togglePreview()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+        Ouvrir l'aperçu
+      </button>
+      <button class="btn btn-primary" onclick="downloadPDF()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
+        Télécharger PDF
+      </button>
     </div>`;
   return div;
 }
@@ -791,46 +628,34 @@ function togglePreview(){
   previewVisible = !previewVisible;
   if(previewVisible) panel.classList.remove('hidden');
   else panel.classList.add('hidden');
-  document.getElementById('previewToggleBtn').textContent = previewVisible ? '✕ Fermer' : '👁 Aperçu';
+  const btn = document.getElementById('previewToggleBtn');
+  if(previewVisible){
+    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg> Fermer`;
+  } else {
+    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg> Aperçu`;
+  }
 }
 
-function renderPreview(doc){
-  const scroll = document.getElementById('previewScroll');
-  document.getElementById('previewTitle').textContent = doc.title;
-
-  const page = buildPDFPage(doc);
-  scroll.innerHTML = '';
-  scroll.appendChild(page);
-}
-
+// ── Build PDF page ──
 function buildPDFPage(doc){
   const page = document.createElement('div');
   page.className = 'pdf-page';
 
-  // Official Colas Digital Solutions logo (SVG matching the real logo)
-  const colasSVG = `<svg width="130" height="52" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Yellow shape left -->
+  const colasSVG = `<svg width="120" height="48" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
-    <!-- Red/dark arrow -->
     <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
-    <!-- Yellow arrow right -->
     <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
-    <!-- COLAS text -->
     <text x="130" y="38" font-family="DM Sans,Arial,sans-serif" font-weight="900" font-size="36" fill="#3D3D52" letter-spacing="2">COLAS</text>
-    <!-- DIGITAL SOLUTIONS text -->
-    <text x="130" y="58" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
+    <text x="130" y="56" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
   </svg>`;
 
-  // Footer decoration: two diagonal yellow lines (bottom right)
-  const footerDeco = `<svg width="72" height="50" viewBox="0 0 72 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/>
-    <line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/>
-  </svg>`;
+  const footerDeco = `<svg width="64" height="46" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
+
+  const calIcon = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#9B9BAE" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="#9B9BAE" stroke-width="2"/><line x1="8" y1="2" x2="8" y2="6" stroke="#9B9BAE" stroke-width="2"/><line x1="3" y1="10" x2="21" y2="10" stroke="#9B9BAE" stroke-width="2"/></svg>`;
+  const userIcon = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#9B9BAE" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="#9B9BAE" stroke-width="2"/></svg>`;
 
   page.innerHTML = `
-    <div class="pdf-header">
-      <div class="pdf-header-logo">${colasSVG}</div>
-    </div>
+    <div class="pdf-header"><div class="pdf-header-logo">${colasSVG}</div></div>
     <div class="pdf-body" id="pdfBodyContent"></div>
     <div class="pdf-footer">
       <span class="pdf-footer-url">www.colasdigitalsolutions.com</span>
@@ -841,105 +666,140 @@ function buildPDFPage(doc){
 
   const body = page.querySelector('#pdfBodyContent');
 
-  // Title block
   const titleBlock = document.createElement('div');
-  titleBlock.style.cssText = 'margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #F5D800;';
-  titleBlock.setAttribute('data-editable', '1');
-  titleBlock.innerHTML = `
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9B9BAE;margin-bottom:6px;">${DOC_TYPE_LABELS[doc.docType] || doc.docType}</div>
-    <h1 style="font-size:20px;font-weight:700;color:#3D3D52;margin:0 0 8px;">${doc.title}</h1>
-    <div style="display:flex;gap:16px;font-size:10px;color:#9B9BAE;">
-      <span>📅 ${doc.date}</span>
-      <span>✍️ ${doc.author}</span>
+  titleBlock.style.cssText='margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #F5D800;';
+  titleBlock.innerHTML=`
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9B9BAE;margin-bottom:5px;">${DOC_TYPE_LABELS[doc.docType]||doc.docType}</div>
+    <h1 style="font-size:19px;font-weight:700;color:#3D3D52;margin:0 0 9px;">${doc.title}</h1>
+    <div class="pdf-meta-row">
+      <span class="pdf-meta-item">${calIcon} ${doc.date}</span>
+      <span class="pdf-meta-item">${userIcon} ${doc.author}</span>
     </div>`;
   body.appendChild(titleBlock);
 
-  // Sections
   doc.sections.forEach(section => {
     const sec = document.createElement('div');
-    sec.style.marginBottom = '14px';
-    sec.setAttribute('data-editable', '1');
-    const tag = section.level === 1 ? 'h2' : 'h3';
-    sec.innerHTML = `<${tag} style="font-size:${section.level===1?'13':'11'}px;font-weight:700;color:#3D3D52;margin:0 0 6px;${section.level===1?'border-bottom:1px solid #E4E4EE;padding-bottom:4px;':''}">${section.title}</${tag}>${section.content}`;
+    sec.style.marginBottom='13px';
+    const tag = section.level===1?'h2':'h3';
+    sec.innerHTML=`<${tag} style="font-size:${section.level===1?'13':'11'}px;font-weight:700;color:#3D3D52;margin:0 0 5px;${section.level===1?'border-bottom:1px solid #E4E4EE;padding-bottom:3px;':''}">${section.title}</${tag}>${section.content}`;
     body.appendChild(sec);
   });
 
   return page;
 }
 
+function renderPreview(doc){
+  document.getElementById('previewTitle').textContent = doc.title;
+  const scroll = document.getElementById('previewScroll');
+  // Exit edit mode when rendering new doc
+  if(editMode){ editMode=false; document.getElementById('editToolbar').classList.add('hidden'); document.getElementById('editToggleBtn').classList.remove('btn-primary'); document.getElementById('editToggleBtn').classList.add('btn-secondary'); }
+  const page = buildPDFPage(doc);
+  scroll.innerHTML='';
+  scroll.appendChild(page);
+}
+
+// ── Edit mode ──
+// Uses a single contenteditable on the pdf-body div.
+// onmousedown="event.preventDefault()" on toolbar buttons preserves the selection.
+function toggleEditMode(){
+  editMode = !editMode;
+  const toolbar = document.getElementById('editToolbar');
+  const btn = document.getElementById('editToggleBtn');
+  const scroll = document.getElementById('previewScroll');
+  const pdfBody = scroll.querySelector('.pdf-body');
+
+  if(editMode){
+    toolbar.classList.remove('hidden');
+    btn.classList.add('btn-primary');
+    btn.classList.remove('btn-secondary');
+    if(pdfBody){ pdfBody.contentEditable='true'; pdfBody.focus(); }
+  } else {
+    toolbar.classList.add('hidden');
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-secondary');
+    if(pdfBody) pdfBody.contentEditable='false';
+  }
+}
+
+function fmtCmd(cmd, val){
+  // Because toolbar buttons use onmousedown+preventDefault, focus stays in pdfBody.
+  document.execCommand(cmd, false, val||null);
+}
+
 // ── History ──
 function addToHistory(doc){
-  docHistory.unshift({ title: doc.title, type: doc.docType, date: doc.date, doc });
+  docHistory.unshift({title:doc.title,type:doc.docType,date:doc.date,doc});
   renderHistory();
 }
-
 function renderHistory(){
   const list = document.getElementById('historyList');
-  if(!docHistory.length){
-    list.innerHTML = '<div class="history-empty">Aucun document généré</div>';
-    return;
-  }
-  list.innerHTML = docHistory.slice(0,10).map((h,i) => `
+  if(!docHistory.length){ list.innerHTML='<div class="history-empty">Aucun document généré</div>'; return; }
+  list.innerHTML=docHistory.slice(0,10).map((h,i)=>`
     <div class="history-item" onclick="loadHistory(${i})">
       <div class="history-item-title">${h.title}</div>
-      <div class="history-item-meta">${DOC_TYPE_LABELS[h.type]} · ${h.date}</div>
+      <div class="history-item-meta">${DOC_TYPE_LABELS[h.type]} &middot; ${h.date}</div>
     </div>`).join('');
 }
-
 function loadHistory(i){
-  generatedDoc = docHistory[i].doc;
+  generatedDoc=docHistory[i].doc;
   renderPreview(generatedDoc);
   if(!previewVisible) togglePreview();
 }
 
-// ── PDF Download ──
+// ── PDF Download via html2pdf (no print dialog) ──
 function downloadPDF(){
   if(!generatedDoc){ alert('Aucun document à télécharger. Générez d\'abord un document.'); return; }
 
-  const page = buildPDFPage(generatedDoc);
-  page.style.cssText = 'width:210mm;min-height:297mm;margin:0;padding:0;font-family:DM Sans,sans-serif;';
+  // Use the live DOM (capturing any edits made in edit mode)
+  const scroll = document.getElementById('previewScroll');
+  const livePage = scroll.querySelector('.pdf-page');
 
-  const printWin = window.open('', '_blank');
-  printWin.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8"/>
-    <title>${generatedDoc.title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <style>
-      *{margin:0;padding:0;box-sizing:border-box;}
-      body{font-family:'DM Sans',sans-serif;background:white;}
-      .pdf-page{width:210mm;min-height:297mm;background:white;display:flex;flex-direction:column;position:relative;overflow:hidden;}
-      .pdf-header{padding:20px 28px 14px;border-bottom:2px solid #F5D800;display:flex;align-items:flex-start;}
-      .pdf-body{flex:1;padding:24px 28px;font-size:10.5pt;color:#3D3D52;line-height:1.7;}
-      .pdf-body h1{font-size:18pt;font-weight:700;color:#3D3D52;margin-bottom:6px;}
-      .pdf-body h2{font-size:13pt;font-weight:700;color:#3D3D52;margin:16px 0 5px;border-bottom:1px solid #E4E4EE;padding-bottom:3px;}
-      .pdf-body h3{font-size:11pt;font-weight:600;color:#3D3D52;margin:10px 0 3px;}
-      .pdf-body p{margin-bottom:7px;}
-      .pdf-body ul{margin:5px 0 8px 16px;}
-      .pdf-body li{margin-bottom:2px;}
-      .pdf-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:9.5pt;}
-      .pdf-body table th{background:#F5D800;color:#3D3D52;padding:5px 8px;font-weight:700;text-align:left;}
-      .pdf-body table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
-      .pdf-body table tr:nth-child(even) td{background:#FAFAFA;}
-      .pdf-footer{padding:8px 28px 12px;display:flex;align-items:center;border-top:1px solid #E4E4EE;position:relative;overflow:hidden;}
-      .pdf-footer-url{font-size:8pt;color:#9B9BAE;}
-      .pdf-footer-page{font-size:8pt;color:#9B9BAE;position:absolute;left:50%;transform:translateX(-50%);}
-      .pdf-footer-deco{position:absolute;right:-8px;bottom:-2px;}
-      .pdf-classification{font-size:7.5pt;color:#9B9BAE;text-align:center;padding:4px 28px;background:#FAFAFA;border-top:1px solid #F0F0F0;letter-spacing:.3px;}
-      @media print{@page{size:A4;margin:0;}body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
-    </style>
-  </head><body>${page.outerHTML}
-  <script>window.onload=()=>{window.print();}<\/script>
-  </body></html>`);
-  printWin.document.close();
+  // Clone and clean up
+  const clone = livePage ? livePage.cloneNode(true) : buildPDFPage(generatedDoc);
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+  // Remove hover/focus styles from clone
+  clone.style.cssText = 'width:210mm;min-height:297mm;background:white;display:flex;flex-direction:column;position:relative;overflow:hidden;font-family:DM Sans,Arial,sans-serif;box-shadow:none;border-radius:0;margin:0;';
+
+  // Inject Google Font for export
+  const fontLink = document.createElement('link');
+  fontLink.rel='stylesheet';
+  fontLink.href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap';
+
+  // Wrapper
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText='position:absolute;left:-9999px;top:0;width:210mm;background:white;';
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+
+  const btn = document.getElementById('downloadBtn');
+  const origHTML = btn.innerHTML;
+  btn.disabled=true;
+  btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Génération…`;
+
+  const safeTitle=(generatedDoc.title||'document').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim().replace(/\s+/g,'_')||'document';
+
+  html2pdf().set({
+    margin:0,
+    filename:safeTitle+'.pdf',
+    image:{type:'jpeg',quality:0.97},
+    html2canvas:{scale:2,useCORS:true,logging:false,letterRendering:true,allowTaint:true},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['avoid-all']}
+  }).from(clone).save().then(()=>{
+    document.body.removeChild(wrapper);
+    btn.disabled=false; btn.innerHTML=origHTML;
+  }).catch(err=>{
+    document.body.removeChild(wrapper);
+    btn.disabled=false; btn.innerHTML=origHTML;
+    alert('Erreur lors de la génération du PDF : '+err.message);
+  });
 }
 
 // ── Init ──
-document.getElementById('tokenOverlay').addEventListener('click', function(e){
-  if(e.target === this) closeTokenModal();
-});
+document.getElementById('tokenOverlay').addEventListener('click', function(e){ if(e.target===this) closeTokenModal(); });
 updateTokenStatus();
 if(!getToken()){
-  setTimeout(() => addMessage('ai', '👋 Bienvenue ! Pour activer l\'IA, cliquez sur <strong>⚙ Token</strong> en haut à droite et entrez votre GitHub Personal Access Token (permission <em>Models → Read-only</em>).'), 500);
+  setTimeout(()=>addMessage('ai','Bienvenue. Pour activer la génération IA, cliquez sur <strong>Token</strong> en haut à droite et entrez votre GitHub Personal Access Token (permission <em>Models — Read-only</em>).'),500);
 }
 </script>
 </body>
