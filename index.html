@@ -6,193 +6,224 @@
 <title>DocGenerator — Colas Digital Solutions</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --yellow:#F5D800;--yellow-dark:#D4B800;--yellow-light:#FFFDE7;
-  --grey:#3D3D52;--grey2:#6B6B82;--grey3:#9B9BAE;
+  --navy:#2C4965;--grey:#3D3D52;--grey2:#6B6B82;--grey3:#9B9BAE;
   --bg:#F4F4F8;--white:#FFFFFF;--bd:#E4E4EE;
   --red:#E53E3E;--green:#22C55E;
   --f:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
 }
 body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100vh;display:flex;flex-direction:column;}
 
-/* TOPBAR */
-.topbar{background:var(--white);border-bottom:1px solid var(--bd);padding:0 24px;height:52px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;}
-.topbar-logo{display:flex;align-items:center;gap:10px;}
-.logo-diamond{width:30px;height:30px;}
-.logo-text{font-size:13px;font-weight:700;color:var(--grey);letter-spacing:.2px;}
-.logo-sub{font-size:10px;font-weight:500;color:var(--grey3);letter-spacing:.8px;text-transform:uppercase;display:block;margin-top:-2px;}
-.topbar-div{width:1px;height:22px;background:var(--bd);margin:0 2px;}
-.topbar-title{font-size:12px;color:var(--grey3);font-weight:500;letter-spacing:.3px;text-transform:uppercase;}
+/* ── TOPBAR ── */
+.topbar{background:var(--white);border-bottom:1px solid var(--bd);padding:0 20px;height:50px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.topbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
+.logo-text{font-size:13px;font-weight:700;color:var(--grey);letter-spacing:.1px;}
+.logo-sub{font-size:10px;font-weight:500;color:var(--grey3);letter-spacing:.6px;text-transform:uppercase;display:block;margin-top:-2px;}
+.topbar-div{width:1px;height:20px;background:var(--bd);}
 .topbar-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;line-height:1;}
+.btn svg{flex-shrink:0;}
 .btn-primary{background:var(--yellow);color:var(--grey);}
 .btn-primary:hover{background:var(--yellow-dark);}
 .btn-secondary{background:var(--white);color:var(--grey2);border:1px solid var(--bd);}
 .btn-secondary:hover{border-color:var(--grey3);color:var(--grey);}
 .btn-ghost{background:transparent;color:var(--grey2);border:1px solid transparent;}
 .btn-ghost:hover{background:var(--bg);border-color:var(--bd);}
+.btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA;}
+.btn-danger:hover{background:#FEE2E2;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-icon{padding:6px;border-radius:6px;}
 
-/* LAYOUT */
-.app-body{display:flex;flex:1;height:calc(100vh - 52px);}
+/* ── LAYOUT ── */
+.app-body{display:flex;flex:1;height:calc(100vh - 50px);overflow:hidden;}
 
-/* SIDEBAR */
-.sidebar{width:272px;flex-shrink:0;background:var(--white);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
-.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--bd);}
-.sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--grey3);margin-bottom:8px;}
+/* ── LEFT PANEL (form) ── */
+.form-panel{width:320px;flex-shrink:0;background:var(--white);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
+.panel-header{padding:14px 16px 10px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;}
+.panel-header-title{font-size:12px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;flex:1;}
+.panel-scroll{flex:1;overflow-y:auto;padding:14px 16px;}
 
-/* Doc types */
-.doc-types{display:flex;flex-direction:column;gap:3px;}
-.doc-type{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;transition:all .12s;border:1px solid transparent;}
-.doc-type:hover{background:var(--bg);}
-.doc-type.active{background:var(--yellow-light);border-color:rgba(245,216,0,.5);}
-.doc-type-icon{width:26px;height:26px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--grey3);}
+/* ── FORM FIELDS ── */
+.field-group{margin-bottom:14px;}
+.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey3);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.field-input{width:100%;padding:8px 10px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;background:var(--white);}
+.field-input:focus{border-color:var(--yellow);}
+.field-textarea{resize:vertical;min-height:64px;line-height:1.55;}
+.field-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239B9BAE' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;}
+
+/* ── SECTIONS ── */
+.sections-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sections-list{display:flex;flex-direction:column;gap:6px;}
+.section-item{border:1.5px solid var(--bd);border-radius:8px;background:var(--bg);overflow:hidden;transition:border-color .15s;}
+.section-item:focus-within{border-color:rgba(245,216,0,.6);}
+.section-item-header{display:flex;align-items:center;gap:6px;padding:7px 9px;background:var(--white);border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;}
+.section-item-header:hover{background:var(--yellow-light);}
+.section-drag{color:var(--grey3);cursor:grab;display:flex;}
+.section-level{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:var(--bd);color:var(--grey2);padding:2px 6px;border-radius:4px;flex-shrink:0;cursor:pointer;}
+.section-level.l1{background:var(--yellow);color:var(--grey);}
+.section-title-input{flex:1;border:none;background:transparent;font-family:var(--f);font-size:12px;font-weight:600;color:var(--grey);outline:none;}
+.section-title-input::placeholder{color:var(--grey3);}
+.section-del{color:var(--grey3);transition:color .12s;display:flex;padding:2px;}
+.section-del:hover{color:var(--red);cursor:pointer;}
+.section-body{padding:8px 9px;}
+.section-content-input{width:100%;min-height:70px;border:none;background:transparent;font-family:var(--f);font-size:12px;color:var(--grey);outline:none;resize:vertical;line-height:1.6;}
+.section-content-input::placeholder{color:var(--grey3);}
+
+/* ── AI ASSISTANT ── */
+.ai-box{border:1.5px solid rgba(245,216,0,.5);border-radius:8px;background:var(--yellow-light);padding:10px 11px;margin-bottom:14px;}
+.ai-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7A6200;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.ai-input-row{display:flex;gap:6px;align-items:flex-end;}
+.ai-textarea{flex:1;padding:7px 9px;border:1.5px solid rgba(245,216,0,.6);border-radius:6px;font-family:var(--f);font-size:12px;color:var(--grey);background:var(--white);outline:none;resize:none;min-height:54px;line-height:1.5;}
+.ai-textarea:focus{border-color:var(--yellow-dark);}
+.ai-textarea::placeholder{color:var(--grey3);}
+.ai-status{font-size:10px;color:var(--grey2);margin-top:6px;min-height:14px;}
+
+/* ── IMPORT ZONE ── */
+.import-zone{border:1.5px dashed var(--bd);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s;color:var(--grey3);font-size:12px;margin-bottom:14px;}
+.import-zone:hover,.import-zone.drag-over{border-color:var(--yellow);background:var(--yellow-light);color:var(--grey);}
+.import-zone-icon{margin:0 auto 7px;width:28px;height:28px;border-radius:7px;background:var(--bd);display:flex;align-items:center;justify-content:center;}
+.import-zone.drag-over .import-zone-icon{background:var(--yellow);}
+
+/* ── DIVIDER ── */
+.section-divider{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey3);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--bd);}
+
+/* ── DOC TYPES ── */
+.doc-types{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;}
+.doc-type{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:6px;cursor:pointer;transition:all .12s;border:1.5px solid var(--bd);background:var(--white);}
+.doc-type:hover{border-color:rgba(245,216,0,.5);background:var(--yellow-light);}
+.doc-type.active{background:var(--yellow-light);border-color:var(--yellow);}
+.doc-type-icon{width:22px;height:22px;border-radius:5px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--grey3);}
 .doc-type.active .doc-type-icon{background:var(--yellow);color:var(--grey);}
-.doc-type-name{font-size:12px;font-weight:500;color:var(--grey);}
-.doc-type-desc{font-size:11px;color:var(--grey3);margin-top:1px;}
+.doc-type-name{font-size:11px;font-weight:500;color:var(--grey);line-height:1.3;}
 
-/* History */
-.history-list{display:flex;flex-direction:column;gap:2px;max-height:200px;overflow-y:auto;}
-.history-item{padding:7px 10px;border-radius:6px;cursor:pointer;transition:all .12s;}
-.history-item:hover{background:var(--bg);}
-.history-item-title{font-size:12px;font-weight:500;color:var(--grey);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.history-item-meta{font-size:10px;color:var(--grey3);margin-top:2px;}
-.history-empty{font-size:12px;color:var(--grey3);text-align:center;padding:14px 0;font-style:italic;}
+/* ── MAIN PREVIEW ── */
+.preview-panel{flex:1;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+.preview-top{padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--white);display:flex;align-items:center;gap:8px;}
+.preview-top-title{font-size:12px;font-weight:600;color:var(--grey);flex:1;}
+.preview-scroll{flex:1;overflow-y:auto;padding:24px;display:flex;justify-content:center;}
 
-/* Token */
-.token-status{display:flex;align-items:center;gap:8px;padding:9px 11px;background:var(--bg);border-radius:7px;border:1px solid var(--bd);}
-.token-dot{width:6px;height:6px;border-radius:50%;background:var(--grey3);flex-shrink:0;}
-.token-dot.ok{background:var(--green);}
-.token-dot.err{background:var(--red);}
-.token-text{font-size:11px;color:var(--grey2);flex:1;}
-
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.chat-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;}
-
-/* Welcome */
-.welcome{text-align:center;padding:52px 24px;max-width:500px;margin:0 auto;}
-.welcome-mark{width:48px;height:48px;background:var(--yellow);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
-.welcome-title{font-size:20px;font-weight:700;color:var(--grey);margin-bottom:8px;}
-.welcome-sub{font-size:13px;color:var(--grey2);line-height:1.65;}
-.welcome-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:20px;}
-.welcome-chip{background:var(--white);border:1px solid var(--bd);border-radius:20px;padding:6px 13px;font-size:11px;color:var(--grey2);cursor:pointer;transition:all .12s;}
-.welcome-chip:hover{border-color:var(--yellow-dark);color:var(--grey);background:var(--yellow-light);}
-
-/* Messages */
-.msg{display:flex;gap:10px;max-width:760px;}
-.msg.user{flex-direction:row-reverse;margin-left:auto;}
-.msg-avatar{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.msg.ai .msg-avatar{background:var(--yellow);}
-.msg.user .msg-avatar{background:var(--grey);}
-.msg-bubble{background:var(--white);border:1px solid var(--bd);border-radius:10px;padding:11px 14px;font-size:13px;line-height:1.65;color:var(--grey);}
-.msg.user .msg-bubble{background:var(--grey);color:var(--white);border-color:var(--grey);}
-.msg-bubble strong{font-weight:600;}
-.msg-bubble em{font-style:italic;color:var(--grey2);}
-
-/* Doc card */
-.doc-card{background:var(--bg);border:1px solid var(--bd);border-radius:9px;overflow:hidden;margin-top:10px;}
-.doc-card-header{padding:11px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:10px;}
-.doc-card-badge{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--yellow);color:var(--grey);white-space:nowrap;flex-shrink:0;}
-.doc-card-title{font-size:12px;font-weight:600;color:var(--grey);}
-.doc-card-meta{font-size:10px;color:var(--grey3);margin-top:2px;}
-.doc-card-actions{padding:9px 14px;display:flex;gap:7px;}
-
-/* Thinking */
-.thinking-dots{display:flex;gap:4px;padding:4px 0;}
-.thinking-dots span{width:5px;height:5px;border-radius:50%;background:var(--grey3);animation:tdot 1.2s infinite;}
-.thinking-dots span:nth-child(2){animation-delay:.2s;}
-.thinking-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes tdot{0%,80%,100%{transform:scale(.8);opacity:.4;}40%{transform:scale(1);opacity:1;}}
-
-/* INPUT */
-.input-area{padding:14px 20px;border-top:1px solid var(--bd);background:var(--white);}
-.input-row{display:flex;gap:8px;align-items:flex-end;background:var(--bg);border:1.5px solid var(--bd);border-radius:10px;padding:7px 9px;transition:border-color .15s;}
-.input-row:focus-within{border-color:var(--yellow);}
-.mic-btn{width:34px;height:34px;border-radius:7px;background:var(--white);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--grey2);transition:all .15s;}
-.mic-btn:hover{border-color:var(--yellow);color:var(--grey);}
-.mic-btn.recording{background:rgba(229,62,62,.07);border-color:var(--red);color:var(--red);animation:prec 1s infinite;}
-@keyframes prec{0%,100%{box-shadow:0 0 0 0 rgba(229,62,62,.3);}50%{box-shadow:0 0 0 5px rgba(229,62,62,0);}}
-.chat-input{flex:1;background:transparent;border:none;outline:none;font-family:var(--f);font-size:13px;color:var(--grey);resize:none;max-height:120px;line-height:1.5;}
-.chat-input::placeholder{color:var(--grey3);}
-.send-btn{width:34px;height:34px;border-radius:7px;background:var(--yellow);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--grey);flex-shrink:0;transition:all .15s;}
-.send-btn:hover{background:var(--yellow-dark);}
-.send-btn:disabled{opacity:.4;cursor:not-allowed;}
-
-/* PREVIEW PANEL */
-.preview-panel{width:440px;flex-shrink:0;background:var(--bg);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
-.preview-panel.hidden{display:none;}
-.preview-header{padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--white);display:flex;align-items:center;gap:8px;}
-.preview-header-title{font-size:12px;font-weight:600;color:var(--grey);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.preview-header-actions{display:flex;gap:5px;flex-shrink:0;}
-.preview-scroll{flex:1;overflow-y:auto;padding:20px;}
-
-/* EDIT TOOLBAR */
-.edit-toolbar{padding:7px 14px;background:var(--white);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
-.edit-toolbar.hidden{display:none;}
-.edit-btn{padding:4px 8px;border-radius:5px;font-size:12px;font-family:var(--f);font-weight:500;border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;transition:all .12s;}
+/* ── EDIT TOOLBAR ── */
+.edit-toolbar{padding:6px 12px;background:var(--white);border-bottom:1px solid var(--bd);display:none;align-items:center;gap:4px;flex-wrap:wrap;}
+.edit-toolbar.show{display:flex;}
+.edit-btn{padding:4px 7px;border-radius:5px;font-size:12px;font-family:var(--f);font-weight:500;border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;transition:all .12s;line-height:1.3;}
 .edit-btn:hover{border-color:var(--yellow);background:var(--yellow-light);}
-.edit-btn.active{background:var(--yellow);border-color:var(--yellow-dark);}
-.edit-sep{width:1px;height:16px;background:var(--bd);margin:0 2px;}
+.edit-sep{width:1px;height:14px;background:var(--bd);margin:0 2px;}
 .edit-select{padding:4px 6px;border-radius:5px;font-size:11px;font-family:var(--f);border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;outline:none;}
-.edit-select:focus{border-color:var(--yellow);}
-.edit-indicator{font-size:10px;color:var(--grey2);padding:2px 8px;background:rgba(245,216,0,.18);border-radius:10px;border:1px solid rgba(245,216,0,.4);margin-left:auto;white-space:nowrap;}
+.edit-indicator{font-size:10px;color:var(--grey2);padding:2px 8px;background:rgba(245,216,0,.2);border-radius:10px;border:1px solid rgba(245,216,0,.4);margin-left:auto;}
 
-/* CONTENTEDITABLE */
-[contenteditable="true"]{outline:none;cursor:text;}
-[contenteditable="true"]:hover{background:rgba(245,216,0,.06);border-radius:2px;}
-[contenteditable="true"]:focus-within{background:rgba(245,216,0,.05);border-radius:2px;}
-
-/* PDF PAGE */
-.pdf-page{width:100%;max-width:595px;margin:0 auto;background:var(--white);box-shadow:0 3px 20px rgba(0,0,0,.09);border-radius:3px;min-height:842px;position:relative;display:flex;flex-direction:column;font-family:'DM Sans',sans-serif;overflow:hidden;}
-.pdf-header{padding:18px 28px 12px;display:flex;align-items:flex-start;border-bottom:2px solid #F5D800;}
-.pdf-header-logo{display:flex;flex-direction:column;align-items:flex-start;}
-.pdf-body{flex:1;padding:24px 28px;font-size:11px;color:#3D3D52;line-height:1.75;}
-.pdf-body h1{font-size:18px;font-weight:700;color:#3D3D52;margin-bottom:6px;margin-top:0;}
-.pdf-body h2{font-size:13px;font-weight:700;color:#3D3D52;margin:16px 0 5px;border-bottom:1px solid #E4E4EE;padding-bottom:4px;}
-.pdf-body h3{font-size:11px;font-weight:600;color:#3D3D52;margin:10px 0 3px;}
-.pdf-body p{margin-bottom:7px;}
-.pdf-body ul{margin:5px 0 8px 16px;}
-.pdf-body li{margin-bottom:2px;}
-.pdf-body table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10px;}
-.pdf-body table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
-.pdf-body table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
-.pdf-body table tr:nth-child(even) td{background:#FAFAFA;}
-.pdf-footer{padding:7px 28px 9px;display:flex;align-items:center;border-top:1px solid #E4E4EE;position:relative;overflow:hidden;min-height:38px;}
-.pdf-footer-url{font-size:8px;font-weight:700;color:#2C4965;}
-.pdf-footer-page{font-size:9px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);}
-.pdf-footer-deco{position:absolute;right:-4px;bottom:-2px;}
-.pdf-classification{font-size:7.5px;color:#29CF00;text-align:center;padding:4px 28px 5px;background:#fff;letter-spacing:.2px;border-top:1px solid #F0F0F0;}
-.pdf-meta-row{display:flex;gap:14px;font-size:9px;color:#9B9BAE;align-items:center;}
-.pdf-meta-item{display:flex;align-items:center;gap:4px;}
-
-/* Preview empty */
-.preview-empty{text-align:center;padding:52px 20px;color:var(--grey3);font-size:12px;}
-.preview-empty-icon{width:40px;height:40px;background:var(--bd);border-radius:10px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;}
-
-/* TOKEN MODAL */
+/* ── TOKEN MODAL ── */
 .overlay{position:fixed;inset:0;background:rgba(30,30,40,.4);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
 .overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:14px;padding:26px;width:460px;box-shadow:0 16px 50px rgba(0,0,0,.14);}
-.modal-title{font-size:16px;font-weight:700;color:var(--grey);margin-bottom:5px;}
-.modal-sub{font-size:13px;color:var(--grey2);margin-bottom:18px;line-height:1.55;}
-.form-group{margin-bottom:14px;}
-.form-label{font-size:11px;font-weight:600;color:var(--grey2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px;}
-.form-input{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;}
+.modal{background:var(--white);border-radius:12px;padding:24px;width:440px;box-shadow:0 16px 50px rgba(0,0,0,.14);}
+.modal-title{font-size:15px;font-weight:700;color:var(--grey);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--grey2);margin-bottom:16px;line-height:1.55;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:10px;font-weight:700;color:var(--grey2);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.4px;}
+.form-input{width:100%;padding:8px 11px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;}
 .form-input:focus{border-color:var(--yellow);}
-.modal-note{background:var(--yellow-light);border:1px solid rgba(245,216,0,.4);border-radius:7px;padding:9px 12px;font-size:12px;color:#7A6200;margin-bottom:14px;line-height:1.5;}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+.modal-note{background:var(--yellow-light);border:1px solid rgba(245,216,0,.4);border-radius:7px;padding:8px 11px;font-size:11px;color:#7A6200;margin-bottom:12px;line-height:1.5;}
+.modal-actions{display:flex;gap:7px;justify-content:flex-end;}
 
-/* SCROLLBAR */
+/* ── STATUS DOT ── */
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--grey3);flex-shrink:0;display:inline-block;}
+.status-dot.ok{background:var(--green);}
+.status-dot.err{background:var(--red);}
+
+/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:10px;}
 
+/* ── ANIMATIONS ── */
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════
+   PDF PAGE  (used both in preview & export)
+   ════════════════════════════════════════ */
+.pdf-page{
+  width:794px; /* 210mm at 96dpi */
+  min-height:1123px; /* 297mm */
+  background:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,.10);
+  border-radius:2px;
+  display:flex;
+  flex-direction:column;
+  font-family:'DM Sans',Arial,sans-serif;
+  overflow:hidden;
+  flex-shrink:0;
+  animation:fadein .2s ease;
+}
+/* header */
+.pdf-hd{
+  padding:18px 32px 14px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  border-bottom:3px solid #F5D800;
+  flex-shrink:0;
+}
+.pdf-hd-right{
+  text-align:right;
+  font-size:9px;
+  color:#9B9BAE;
+  line-height:1.7;
+  padding-top:4px;
+  font-family:'DM Sans',Arial,sans-serif;
+}
+.pdf-hd-right strong{display:block;font-size:10px;color:#3D3D52;font-weight:600;}
+/* body */
+.pdf-bd{
+  flex:1;
+  padding:22px 32px 18px;
+  font-size:10.5px;
+  color:#3D3D52;
+  line-height:1.75;
+  font-family:'DM Sans',Arial,sans-serif;
+}
+.pdf-doc-type{
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:#9B9BAE;margin-bottom:4px;font-family:'DM Sans',Arial,sans-serif;
+}
+.pdf-bd h1{font-size:18px;font-weight:700;color:#3D3D52;margin:0 0 8px;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd .pdf-meta{display:flex;gap:14px;font-size:8.5px;color:#9B9BAE;margin-bottom:16px;padding-bottom:12px;border-bottom:1.5px solid #F5D800;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd .pdf-meta span{display:flex;align-items:center;gap:3px;}
+.pdf-bd h2{font-size:12px;font-weight:700;color:#3D3D52;margin:18px 0 5px;padding-bottom:3px;border-bottom:1px solid #E4E4EE;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd h3{font-size:10.5px;font-weight:600;color:#3D3D52;margin:12px 0 3px;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd p{margin-bottom:6px;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd ul{margin:4px 0 7px 15px;}
+.pdf-bd li{margin-bottom:2px;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd ol{margin:4px 0 7px 15px;}
+.pdf-bd table{width:100%;border-collapse:collapse;margin:8px 0;font-size:9.5px;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-bd table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
+.pdf-bd table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
+.pdf-bd table tr:nth-child(even) td{background:#FAFAFA;}
+/* footer */
+.pdf-ft{
+  padding:7px 32px 8px;
+  display:flex;align-items:center;
+  border-top:1px solid #E4E4EE;
+  min-height:36px;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+  background:#fff;
+}
+.pdf-ft-url{font-size:7.5px;font-weight:700;color:#2C4965;font-family:'DM Sans',Arial,sans-serif;}
+.pdf-ft-page{font-size:8px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);font-family:'DM Sans',Arial,sans-serif;}
+.pdf-ft-deco{position:absolute;right:-3px;bottom:-2px;}
+.pdf-classif{
+  font-size:7px;color:#29CF00;text-align:center;
+  padding:3px 32px 4px;background:#fff;letter-spacing:.15px;
+  border-top:1px solid #F0F0F0;flex-shrink:0;
+  font-family:'DM Sans',Arial,sans-serif;
+}
 </style>
 </head>
 <body>
@@ -200,15 +231,15 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 <!-- TOKEN MODAL -->
 <div class="overlay" id="tokenOverlay">
   <div class="modal">
-    <div class="modal-title">Configurer le token GitHub Models</div>
-    <div class="modal-sub">Entrez votre Personal Access Token GitHub pour activer la génération IA. Il est stocké uniquement dans votre navigateur.</div>
+    <div class="modal-title">Token GitHub Models</div>
+    <div class="modal-sub">Le token est stocké localement dans votre navigateur et n'est jamais envoyé ailleurs.</div>
     <div class="form-group">
-      <label class="form-label">GitHub Personal Access Token</label>
-      <input class="form-input" id="tokenInput" type="password" placeholder="github_pat_XXXXXXXXXXXX..." autocomplete="off"/>
+      <label class="form-label">Personal Access Token</label>
+      <input class="form-input" id="tokenInput" type="password" placeholder="github_pat_XXXXXXXXXXXX…" autocomplete="off"/>
     </div>
-    <div class="modal-note">Créez un token sur <strong>github.com/settings/tokens</strong> avec la permission <strong>Account &rarr; Models &rarr; Read-only</strong>.</div>
+    <div class="modal-note">Sur <strong>github.com/settings/tokens</strong>, créez un token avec la permission <strong>Account → Models → Read-only</strong>.</div>
     <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeTokenModal()">Annuler</button>
+      <button class="btn btn-ghost" onclick="closeTokenModal()">Annuler</button>
       <button class="btn btn-primary" onclick="saveToken()">Enregistrer</button>
     </div>
   </div>
@@ -217,7 +248,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">
-    <svg class="logo-diamond" viewBox="0 0 30 30" fill="none">
+    <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
       <polygon points="15,2 28,15 15,28 2,15" fill="#F5D800"/>
       <text x="15" y="19" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="800" font-size="7" fill="#3D3D52">CDS</text>
     </svg>
@@ -227,137 +258,153 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
     </div>
   </div>
   <div class="topbar-div"></div>
-  <span class="topbar-title" id="currentDocType">Rapport technique</span>
   <div class="topbar-right">
-    <button class="btn btn-secondary" id="previewToggleBtn" onclick="togglePreview()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
-      Aperçu
+    <span class="status-dot" id="statusDot"></span>
+    <span style="font-size:11px;color:var(--grey2)" id="statusText">IA désactivée</span>
+    <button class="btn btn-ghost" onclick="openTokenModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Token IA
     </button>
     <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
       Télécharger PDF
-    </button>
-    <button class="btn btn-ghost" onclick="openTokenModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
-      Token
     </button>
   </div>
 </div>
 
 <div class="app-body">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Type de document</div>
-      <div class="doc-types" id="docTypes">
-
-        <div class="doc-type active" data-type="rapport" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/><line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2"/><line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Rapport technique</div><div class="doc-type-desc">Analyse, bilan, audit</div></div>
-        </div>
-
-        <div class="doc-type" data-type="procedure" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/><line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2"/><line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2"/><line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Procédure</div><div class="doc-type-desc">Étapes, protocole</div></div>
-        </div>
-
-        <div class="doc-type" data-type="note" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Note de service</div><div class="doc-type-desc">Information interne</div></div>
-        </div>
-
-        <div class="doc-type" data-type="cr" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Compte-rendu</div><div class="doc-type-desc">Réunion, visite terrain</div></div>
-        </div>
-
-        <div class="doc-type" data-type="spec" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Spécification</div><div class="doc-type-desc">Cahier des charges</div></div>
-        </div>
-
-        <div class="doc-type" data-type="guide" onclick="selectDocType(this)">
-          <div class="doc-type-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" stroke="currentColor" stroke-width="2"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" stroke="currentColor" stroke-width="2"/></svg></div>
-          <div><div class="doc-type-name">Guide utilisateur</div><div class="doc-type-desc">Manuel, tutoriel</div></div>
-        </div>
-
-      </div>
+  <!-- ── LEFT PANEL ── -->
+  <div class="form-panel">
+    <div class="panel-header">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="color:var(--grey3)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/></svg>
+      <span class="panel-header-title">Document</span>
+      <button class="btn btn-primary" style="font-size:11px;padding:5px 10px" onclick="refreshPreview()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><polyline points="1 4 1 10 7 10" stroke="currentColor" stroke-width="2"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10" stroke="currentColor" stroke-width="2"/></svg>
+        Actualiser
+      </button>
     </div>
 
-    <div class="sidebar-section" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
-      <div class="sidebar-label">Historique</div>
-      <div class="history-list" id="historyList">
-        <div class="history-empty">Aucun document généré</div>
-      </div>
-    </div>
+    <div class="panel-scroll">
 
-    <div class="sidebar-section">
-      <div class="sidebar-label">Statut IA</div>
-      <div class="token-status">
-        <div class="token-dot" id="tokenDot"></div>
-        <span class="token-text" id="tokenText">Token non configuré</span>
-        <button class="btn btn-ghost" style="font-size:11px;padding:4px 8px" onclick="openTokenModal()">Configurer</button>
+      <!-- Type de document -->
+      <div class="field-group">
+        <div class="field-label">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/></svg>
+          Type de document
+        </div>
+        <div class="doc-types" id="docTypesGrid">
+          <div class="doc-type active" data-type="rapport" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.8"/></svg></div>
+            <div class="doc-type-name">Rapport</div>
+          </div>
+          <div class="doc-type" data-type="procedure" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.8"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.8"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="1.8"/><line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2.5"/><line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2.5"/><line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2.5"/></svg></div>
+            <div class="doc-type-name">Procédure</div>
+          </div>
+          <div class="doc-type" data-type="note" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.8"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+            <div class="doc-type-name">Note interne</div>
+          </div>
+          <div class="doc-type" data-type="cr" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+            <div class="doc-type-name">Compte-rendu</div>
+          </div>
+          <div class="doc-type" data-type="spec" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="1.8"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="1.8"/></svg></div>
+            <div class="doc-type-name">Spécification</div>
+          </div>
+          <div class="doc-type" data-type="guide" onclick="selectDocType(this)">
+            <div class="doc-type-icon"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" stroke="currentColor" stroke-width="1.8"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" stroke="currentColor" stroke-width="1.8"/></svg></div>
+            <div class="doc-type-name">Guide</div>
+          </div>
+        </div>
       </div>
+
+      <!-- Métadonnées -->
+      <div class="section-divider">Informations</div>
+
+      <div class="field-group">
+        <div class="field-label">Titre du document</div>
+        <input class="field-input" id="docTitle" type="text" value="Rapport technique — Sécurité réseau" placeholder="Titre du document" oninput="liveUpdateTitle()"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="field-group">
+          <div class="field-label">Auteur</div>
+          <input class="field-input" id="docAuthor" type="text" value="Colas Digital Solutions" placeholder="Auteur"/>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Date</div>
+          <input class="field-input" id="docDate" type="date" value=""/>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Référence</div>
+        <input class="field-input" id="docRef" type="text" placeholder="CDS-2024-001 (optionnel)"/>
+      </div>
+
+      <!-- IA -->
+      <div class="section-divider">Assistant IA</div>
+      <div class="ai-box">
+        <div class="ai-box-label">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#7A6200" stroke-width="2"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#7A6200" stroke-width="2"/></svg>
+          Générer le contenu
+        </div>
+        <textarea class="ai-textarea" id="aiPrompt" placeholder="Décrivez le document à créer…&#10;Ex : Rapport d'audit réseau du site de Lyon, infrastructure Cisco, 3 VLANs…" rows="3"></textarea>
+        <div class="ai-input-row" style="margin-top:6px">
+          <button class="btn btn-primary" style="font-size:11px;flex:1" onclick="generateWithAI()">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l2.5 6L2 14l12-6z" fill="currentColor"/></svg>
+            Générer
+          </button>
+        </div>
+        <div class="ai-status" id="aiStatus"></div>
+      </div>
+
+      <!-- Import Word -->
+      <div class="section-divider">Import Word</div>
+      <div class="import-zone" id="importZone" onclick="document.getElementById('wordFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="import-zone-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5-5 5 5M12 5v12" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div style="font-weight:600;margin-bottom:2px">Importer un .docx</div>
+        <div style="font-size:10px">Glissez-déposez ou cliquez — le contenu remplace les sections</div>
+      </div>
+      <input type="file" id="wordFileInput" accept=".docx" style="display:none" onchange="importWord(this.files[0])"/>
+
+      <!-- Sections -->
+      <div class="section-divider">Sections</div>
+      <div class="sections-header">
+        <span style="font-size:11px;color:var(--grey2)" id="sectionsCount">0 section</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="addSection(1)">+ H1</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 8px" onclick="addSection(2)">+ H2</button>
+        </div>
+      </div>
+      <div class="sections-list" id="sectionsList"></div>
+
+      <div style="height:20px"></div>
     </div>
   </div>
 
-  <!-- MAIN CHAT -->
-  <div class="main">
-    <div class="chat-area" id="chatArea">
-      <div class="welcome" id="welcomeMsg">
-        <div class="welcome-mark">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>
-        </div>
-        <div class="welcome-title">DocGenerator</div>
-        <div class="welcome-sub">Décrivez le document que vous souhaitez créer. L'IA génère un document professionnel au format Colas Digital Solutions, prêt à télécharger en PDF.</div>
-        <div class="welcome-chips">
-          <span class="welcome-chip" onclick="useChip(this)">Rapport d'audit réseau, site de Lyon</span>
-          <span class="welcome-chip" onclick="useChip(this)">Procédure d'installation switch Cisco</span>
-          <span class="welcome-chip" onclick="useChip(this)">Note de service politique mots de passe</span>
-          <span class="welcome-chip" onclick="useChip(this)">Compte-rendu réunion projet infrastructure</span>
-          <span class="welcome-chip" onclick="useChip(this)">Guide utilisateur SchémaFlow</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="input-area">
-      <div class="input-row">
-        <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Dicter">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 10a7 7 0 0014 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </button>
-        <textarea class="chat-input" id="chatInput" rows="1"
-          placeholder="Ex : Génère un rapport technique sur la sécurité réseau du site de Marseille…"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"
-          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l2.5 6L2 14l12-6z" fill="currentColor"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PREVIEW PANEL -->
-  <div class="preview-panel hidden" id="previewPanel">
-    <div class="preview-header">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="color:var(--grey3);flex-shrink:0"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/></svg>
-      <span class="preview-header-title" id="previewTitle">Aperçu du document</span>
-      <div class="preview-header-actions">
-        <button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEditMode()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/></svg>
+  <!-- ── PREVIEW PANEL ── -->
+  <div class="preview-panel">
+    <div class="preview-top">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="color:var(--grey3)"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+      <span class="preview-top-title">Aperçu — <span id="previewDocType">Rapport technique</span></span>
+      <div style="display:flex;gap:5px">
+        <button class="btn btn-secondary" style="font-size:11px" id="editToggleBtn" onclick="toggleEditMode()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/></svg>
           Modifier
         </button>
-        <button class="btn btn-primary" onclick="downloadPDF()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
+        <button class="btn btn-primary" style="font-size:11px" onclick="downloadPDF()" id="dlBtnPreview">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
           PDF
-        </button>
-        <button class="btn btn-ghost" onclick="togglePreview()" style="padding:6px 8px">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
         </button>
       </div>
     </div>
 
-    <div class="edit-toolbar hidden" id="editToolbar">
+    <!-- Edit toolbar -->
+    <div class="edit-toolbar" id="editToolbar">
       <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('bold')"><b>G</b></button>
       <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('italic')"><i>I</i></button>
       <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('underline')"><u>S</u></button>
@@ -365,283 +412,177 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
       <select class="edit-select" onchange="fmtCmd('fontSize',this.value);this.value=''">
         <option value="">Taille</option>
         <option value="1">8pt</option><option value="2">10pt</option><option value="3">12pt</option>
-        <option value="4">14pt</option><option value="5">18pt</option><option value="6">24pt</option>
+        <option value="4">14pt</option><option value="5">18pt</option>
       </select>
       <select class="edit-select" onchange="fmtCmd('foreColor',this.value);this.value=''">
         <option value="">Couleur</option>
         <option value="#3D3D52">Défaut</option>
         <option value="#2C4965">Bleu Colas</option>
-        <option value="#F5D800">Jaune</option>
         <option value="#E53E3E">Rouge</option>
-        <option value="#22C55E">Vert</option>
       </select>
       <div class="edit-sep"></div>
-      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyLeft')" title="Aligner à gauche">&#8676;</button>
-      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyCenter')" title="Centrer">&#8677;</button>
-      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('insertUnorderedList')" title="Liste">&#8285;</button>
-      <span class="edit-indicator">Mode édition — cliquez dans le document pour modifier</span>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyLeft')">⇤</button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('justifyCenter')">⇥</button>
+      <button class="edit-btn" onmousedown="event.preventDefault();fmtCmd('insertUnorderedList')">≡</button>
+      <span class="edit-indicator">Mode édition actif — cliquez dans le document</span>
     </div>
 
     <div class="preview-scroll" id="previewScroll">
-      <div class="preview-empty">
-        <div class="preview-empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#9B9BAE" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#9B9BAE" stroke-width="2"/></svg>
+      <!-- PDF page inserted here -->
+      <div id="previewPlaceholder" style="text-align:center;padding:60px 20px;color:var(--grey3);font-size:13px;">
+        <div style="width:48px;height:48px;background:var(--bd);border-radius:12px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#9B9BAE" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#9B9BAE" stroke-width="2"/></svg>
         </div>
-        Générez un document pour voir l'aperçu
+        Remplissez le formulaire à gauche,<br>puis cliquez sur <strong>Actualiser</strong>
       </div>
     </div>
   </div>
-</div>
+
+</div><!-- /app-body -->
 
 <script>
-// ── State ──
+/* ═══════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
 let currentDocType = 'rapport';
-let generatedDoc = null;
-let chatHistory = [];
-let docHistory = [];
-let isRecording = false;
-let recognition = null;
-let previewVisible = false;
+let sections = [];
+let sectionIdCounter = 0;
 let editMode = false;
-// Saved selection for toolbar commands
-let savedRange = null;
 
 const DOC_TYPE_LABELS = {
   rapport:'Rapport technique', procedure:'Procédure', note:'Note de service',
   cr:'Compte-rendu', spec:'Spécification', guide:'Guide utilisateur'
 };
 
-// ── Token ──
-function getToken(){ return localStorage.getItem('docgen_gh_token') || ''; }
+/* ═══════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+(function init(){
+  const today = new Date();
+  document.getElementById('docDate').value = today.toISOString().split('T')[0];
+  updateTokenStatus();
+  addSection(1, 'Introduction', '<p>Présentation du contexte et des objectifs du document.</p>');
+  addSection(2, 'Contexte', '<p>Décrivez ici le contexte de la mission ou du sujet.</p>');
+  addSection(1, 'Analyse', '<p>Détail des éléments analysés.</p>');
+  addSection(1, 'Recommandations', '<p>Actions recommandées à la suite de cette analyse.</p>');
+  addSection(1, 'Conclusion', '<p>Synthèse et prochaines étapes.</p>');
+  refreshPreview();
+})();
+
+/* ═══════════════════════════════════════
+   TOKEN
+════════════════════════════════════════ */
+function getToken(){ return localStorage.getItem('docgen_gh_token')||''; }
 function saveToken(){
-  const t = document.getElementById('tokenInput').value.trim();
-  if(!t){ alert('Token vide !'); return; }
-  localStorage.setItem('docgen_gh_token', t);
+  const t=document.getElementById('tokenInput').value.trim();
+  if(!t){alert('Token vide !');return;}
+  localStorage.setItem('docgen_gh_token',t);
   closeTokenModal();
   updateTokenStatus();
-  addMessage('ai', 'Token enregistré. Vous pouvez maintenant générer des documents.');
 }
 function openTokenModal(){
-  const t = getToken();
-  if(t) document.getElementById('tokenInput').value = t;
+  const t=getToken();
+  if(t) document.getElementById('tokenInput').value=t;
   document.getElementById('tokenOverlay').classList.add('show');
 }
 function closeTokenModal(){ document.getElementById('tokenOverlay').classList.remove('show'); }
 function updateTokenStatus(){
-  const t = getToken();
-  const dot = document.getElementById('tokenDot');
-  const text = document.getElementById('tokenText');
-  if(t){ dot.className='token-dot ok'; text.textContent='IA active (GitHub Models)'; }
-  else { dot.className='token-dot err'; text.textContent='Token non configuré'; }
+  const t=getToken();
+  const dot=document.getElementById('statusDot');
+  const text=document.getElementById('statusText');
+  if(t){dot.className='status-dot ok';text.textContent='IA active';}
+  else{dot.className='status-dot err';text.textContent='IA désactivée';}
 }
+document.getElementById('tokenOverlay').addEventListener('click',function(e){if(e.target===this)closeTokenModal();});
 
-// ── Doc type ──
+/* ═══════════════════════════════════════
+   DOC TYPE
+════════════════════════════════════════ */
 function selectDocType(el){
-  document.querySelectorAll('.doc-type').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.doc-type').forEach(d=>d.classList.remove('active'));
   el.classList.add('active');
-  currentDocType = el.dataset.type;
-  document.getElementById('currentDocType').textContent = DOC_TYPE_LABELS[currentDocType];
+  currentDocType=el.dataset.type;
+  document.getElementById('previewDocType').textContent=DOC_TYPE_LABELS[currentDocType];
 }
 
-// ── Mic ──
-function toggleMic(){
-  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-    alert('Reconnaissance vocale non supportée. Utilisez Chrome ou Edge.'); return;
-  }
-  if(isRecording){ recognition.stop(); return; }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'fr-FR'; recognition.continuous = false; recognition.interimResults = true;
-  const micBtn = document.getElementById('micBtn');
-  const input = document.getElementById('chatInput');
-  recognition.onstart = () => { isRecording=true; micBtn.classList.add('recording'); input.placeholder='Dictez votre demande…'; };
-  recognition.onresult = (e) => {
-    let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript;
-    input.value=t; input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,120)+'px';
-  };
-  recognition.onend = () => {
-    isRecording=false; micBtn.classList.remove('recording');
-    input.placeholder='Ex : Génère un rapport technique sur la sécurité réseau du site de Marseille…';
-    if(input.value.trim()) sendMessage();
-  };
-  recognition.onerror = (e) => { isRecording=false; micBtn.classList.remove('recording'); if(e.error==='not-allowed') alert('Accès au microphone refusé.'); };
-  recognition.start();
+/* ═══════════════════════════════════════
+   SECTIONS
+════════════════════════════════════════ */
+function addSection(level=1, title='', content=''){
+  const id=++sectionIdCounter;
+  sections.push({id,level,title,content});
+  renderSections();
+  return id;
 }
-
-// ── Chat ──
-function addMessage(role, html, extraNode=null){
-  const welcome = document.getElementById('welcomeMsg');
-  if(welcome) welcome.remove();
-  const area = document.getElementById('chatArea');
-  const div = document.createElement('div');
-  div.className = 'msg '+role;
-  const avatar = document.createElement('div');
-  avatar.className = 'msg-avatar';
-  if(role==='user'){
-    avatar.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="white" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="white" stroke-width="2"/></svg>`;
-  } else {
-    avatar.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>`;
-  }
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble';
-  bubble.innerHTML = html;
-  if(extraNode) bubble.appendChild(extraNode);
-  if(role==='user'){ div.appendChild(bubble); div.appendChild(avatar); }
-  else { div.appendChild(avatar); div.appendChild(bubble); }
-  area.appendChild(div);
-  area.scrollTop = area.scrollHeight;
-  return bubble;
+function removeSection(id){
+  sections=sections.filter(s=>s.id!==id);
+  renderSections();
 }
-
-function addThinking(){
-  const area = document.getElementById('chatArea');
-  const div = document.createElement('div');
-  div.className='msg ai'; div.id='thinkingMsg';
-  const av = document.createElement('div'); av.className='msg-avatar'; av.style.background='var(--yellow)';
-  av.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#3D3D52" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#3D3D52" stroke-width="2"/></svg>`;
-  const bub = document.createElement('div'); bub.className='msg-bubble';
-  bub.innerHTML=`<div class="thinking-dots"><span></span><span></span><span></span></div>`;
-  div.appendChild(av); div.appendChild(bub);
-  area.appendChild(div); area.scrollTop=area.scrollHeight;
+function toggleLevel(id){
+  const s=sections.find(s=>s.id===id);
+  if(s){s.level=s.level===1?2:1;renderSections();}
 }
-function removeThinking(){ const el=document.getElementById('thinkingMsg'); if(el) el.remove(); }
-function useChip(el){ document.getElementById('chatInput').value=el.textContent; document.getElementById('chatInput').focus(); }
-
-// ── System prompt ──
-const SYSTEM_PROMPT = `Tu es DocGenerator, un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
-
-Quand l'utilisateur demande un document, réponds UNIQUEMENT avec un JSON (sans markdown, sans texte avant/après) :
-{
-  "type": "document",
-  "title": "Titre du document",
-  "docType": "rapport|procedure|note|cr|spec|guide",
-  "date": "JJ/MM/AAAA",
-  "author": "Colas Digital Solutions",
-  "classification": "C2 - COLAS GROUP INTERNAL: Employees and partners who need to know.",
-  "sections": [
-    {
-      "title": "Titre de section",
-      "level": 1,
-      "content": "Contenu HTML simple (<p>, <ul><li>, <strong>, <em>, <table>)"
-    }
-  ],
-  "message": "Message court décrivant ce qui a été généré"
-}
-
-Règles :
-- Français professionnel, ton technique et précis
-- Rapport : intro/contexte, analyse/constats, recommandations, conclusion
-- Procédure : objectif, prérequis, étapes numérotées, vérification
-- Note : objet, destinataires, corps, actions requises
-- Compte-rendu : participants, ordre du jour, points abordés, décisions, actions
-- Spécification : contexte, exigences fonctionnelles, exigences techniques, critères de validation
-- Guide : introduction, prérequis, étapes détaillées, dépannage
-- Contenu complet et réaliste, minimum 4 sections substantielles
-- Tableaux quand pertinent
-
-Pour les questions générales :
-{"type":"chat","message":"réponse HTML simple"}`;
-
-async function callGPT(userMsg){
-  const token = getToken();
-  if(!token) throw new Error('NO_TOKEN');
-  chatHistory.push({role:'user',content:userMsg});
-  const res = await fetch('https://models.inference.ai.azure.com/chat/completions', {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
-    body:JSON.stringify({model:'gpt-4o',messages:[{role:'system',content:SYSTEM_PROMPT},...chatHistory],max_tokens:3000,temperature:0.4})
-  });
-  if(!res.ok){ const err=await res.json().catch(()=>({error:{message:res.statusText}})); throw new Error(err.error?.message||`Erreur ${res.status}`); }
-  const data = await res.json();
-  const reply = data.choices[0].message.content.trim();
-  chatHistory.push({role:'assistant',content:reply});
-  return reply;
-}
-
-async function sendMessage(){
-  const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if(!msg) return;
-  input.value=''; input.style.height='auto';
-  document.getElementById('sendBtn').disabled=true;
-  addMessage('user', msg.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'));
-  addThinking();
-  if(!getToken()){
-    removeThinking();
-    addMessage('ai','Token non configuré. Cliquez sur <strong>Token</strong> en haut à droite pour le configurer.');
-    document.getElementById('sendBtn').disabled=false;
-    return;
-  }
-  try {
-    const reply = await callGPT(msg);
-    removeThinking();
-    let parsed=null;
-    try{ parsed=JSON.parse(reply.replace(/```json|```/g,'').trim()); }
-    catch(e){ addMessage('ai',reply); document.getElementById('sendBtn').disabled=false; return; }
-    if(parsed.type==='document'){
-      generatedDoc=parsed;
-      addMessage('ai', parsed.message||'Document généré avec succès.', makeDocCard(parsed));
-      renderPreview(parsed);
-      addToHistory(parsed);
-      document.getElementById('downloadBtn').style.display='';
-      if(!previewVisible) togglePreview();
-    } else {
-      addMessage('ai', parsed.message||reply);
-    }
-  } catch(err){
-    removeThinking();
-    if(err.message==='NO_TOKEN') addMessage('ai','Token non configuré. Cliquez sur <strong>Token</strong>.');
-    else if(err.message.includes('401')||err.message.includes('403')) addMessage('ai','Token invalide ou expiré. Recréez un token sur <em>github.com/settings/tokens</em>.');
-    else if(err.message.includes('429')) addMessage('ai','Limite de requêtes atteinte. Attendez quelques secondes et réessayez.');
-    else addMessage('ai',`Erreur : ${err.message}`);
-  }
-  document.getElementById('sendBtn').disabled=false;
-}
-
-function makeDocCard(doc){
-  const div = document.createElement('div');
-  div.className='doc-card';
-  div.innerHTML=`
-    <div class="doc-card-header">
-      <span class="doc-card-badge">${DOC_TYPE_LABELS[doc.docType]||doc.docType}</span>
-      <div style="flex:1;min-width:0">
-        <div class="doc-card-title">${doc.title}</div>
-        <div class="doc-card-meta">${doc.date} &middot; ${doc.sections.length} sections</div>
+function renderSections(){
+  const list=document.getElementById('sectionsList');
+  const count=document.getElementById('sectionsCount');
+  count.textContent=sections.length+' section'+(sections.length>1?'s':'');
+  if(!sections.length){list.innerHTML='<div style="font-size:12px;color:var(--grey3);text-align:center;padding:14px 0;">Aucune section</div>';return;}
+  list.innerHTML=sections.map(s=>`
+    <div class="section-item" data-id="${s.id}">
+      <div class="section-item-header">
+        <span class="section-drag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/><line x1="3" y1="15" x2="21" y2="15" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        <span class="section-level ${s.level===1?'l1':''}" onclick="toggleLevel(${s.id})" title="Cliquer pour changer le niveau">H${s.level}</span>
+        <input class="section-title-input" value="${escHtml(s.title)}" placeholder="Titre de la section" onchange="updateSection(${s.id},'title',this.value)"/>
+        <span class="section-del" onclick="removeSection(${s.id})">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
       </div>
-    </div>
-    <div class="doc-card-actions">
-      <button class="btn btn-secondary" onclick="if(!previewVisible)togglePreview()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
-        Ouvrir l'aperçu
-      </button>
-      <button class="btn btn-primary" onclick="downloadPDF()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
-        Télécharger PDF
-      </button>
-    </div>`;
-  return div;
+      <div class="section-body">
+        <textarea class="section-content-input" placeholder="Contenu HTML : <p>, <ul><li>, <strong>, <table>…" onchange="updateSection(${s.id},'content',this.value)">${escHtml(s.content)}</textarea>
+      </div>
+    </div>`).join('');
+}
+function updateSection(id, field, val){
+  const s=sections.find(s=>s.id===id);
+  if(s) s[field]=val;
+}
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ═══════════════════════════════════════
+   LIVE TITLE
+════════════════════════════════════════ */
+function liveUpdateTitle(){
+  const page=document.querySelector('.pdf-page');
+  if(!page) return;
+  const h1=page.querySelector('.pdf-bd h1');
+  if(h1) h1.textContent=document.getElementById('docTitle').value||'Sans titre';
 }
 
-// ── Preview ──
-function togglePreview(){
-  const panel = document.getElementById('previewPanel');
-  previewVisible = !previewVisible;
-  if(previewVisible) panel.classList.remove('hidden');
-  else panel.classList.add('hidden');
-  const btn = document.getElementById('previewToggleBtn');
-  if(previewVisible){
-    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg> Fermer`;
-  } else {
-    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg> Aperçu`;
-  }
-}
+/* ═══════════════════════════════════════
+   BUILD PDF PAGE (DOM)
+════════════════════════════════════════ */
+function buildPDFPage(){
+  const title=document.getElementById('docTitle').value||'Sans titre';
+  const author=document.getElementById('docAuthor').value||'Colas Digital Solutions';
+  const ref=document.getElementById('docRef').value;
+  const dateRaw=document.getElementById('docDate').value;
+  const dateStr=dateRaw?new Date(dateRaw+'T12:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}):new Date().toLocaleDateString('fr-FR');
+  const typeLabel=DOC_TYPE_LABELS[currentDocType]||currentDocType;
 
-// ── Build PDF page ──
-function buildPDFPage(doc){
-  const page = document.createElement('div');
-  page.className = 'pdf-page';
+  // Collect section edits from DOM textareas before reading sections[]
+  document.querySelectorAll('.section-item').forEach(el=>{
+    const id=parseInt(el.dataset.id);
+    const s=sections.find(s=>s.id===id);
+    if(!s) return;
+    const ti=el.querySelector('.section-title-input');
+    const ci=el.querySelector('.section-content-input');
+    if(ti) s.title=ti.value;
+    if(ci) s.content=ci.value;
+  });
 
-  const colasSVG = `<svg width="120" height="48" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  const colasSVG=`<svg width="110" height="44" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
     <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
     <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
@@ -649,157 +590,302 @@ function buildPDFPage(doc){
     <text x="130" y="56" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
   </svg>`;
 
-  const footerDeco = `<svg width="64" height="46" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
+  const footerDeco=`<svg width="56" height="40" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
 
-  const calIcon = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#9B9BAE" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="#9B9BAE" stroke-width="2"/><line x1="8" y1="2" x2="8" y2="6" stroke="#9B9BAE" stroke-width="2"/><line x1="3" y1="10" x2="21" y2="10" stroke="#9B9BAE" stroke-width="2"/></svg>`;
-  const userIcon = `<svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#9B9BAE" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="#9B9BAE" stroke-width="2"/></svg>`;
+  const sectionsHTML=sections.map(s=>{
+    const tag=s.level===1?'h2':'h3';
+    return `<${tag}>${s.title||'Section sans titre'}</${tag}>${s.content||''}`;
+  }).join('');
 
-  page.innerHTML = `
-    <div class="pdf-header"><div class="pdf-header-logo">${colasSVG}</div></div>
-    <div class="pdf-body" id="pdfBodyContent"></div>
-    <div class="pdf-footer">
-      <span class="pdf-footer-url">www.colasdigitalsolutions.com</span>
-      <span class="pdf-footer-page">01</span>
-      <div class="pdf-footer-deco">${footerDeco}</div>
+  const page=document.createElement('div');
+  page.className='pdf-page';
+  page.innerHTML=`
+    <div class="pdf-hd">
+      ${colasSVG}
+      <div class="pdf-hd-right">
+        ${ref?`<strong>Réf. ${ref}</strong>`:''}
+        ${dateStr}<br>${author}
+      </div>
     </div>
-    <div class="pdf-classification">C2 - COLAS GROUP INTERNAL: Employees and partners who need to know.</div>`;
-
-  const body = page.querySelector('#pdfBodyContent');
-
-  const titleBlock = document.createElement('div');
-  titleBlock.style.cssText='margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #F5D800;';
-  titleBlock.innerHTML=`
-    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9B9BAE;margin-bottom:5px;">${DOC_TYPE_LABELS[doc.docType]||doc.docType}</div>
-    <h1 style="font-size:19px;font-weight:700;color:#3D3D52;margin:0 0 9px;">${doc.title}</h1>
-    <div class="pdf-meta-row">
-      <span class="pdf-meta-item">${calIcon} ${doc.date}</span>
-      <span class="pdf-meta-item">${userIcon} ${doc.author}</span>
-    </div>`;
-  body.appendChild(titleBlock);
-
-  doc.sections.forEach(section => {
-    const sec = document.createElement('div');
-    sec.style.marginBottom='13px';
-    const tag = section.level===1?'h2':'h3';
-    sec.innerHTML=`<${tag} style="font-size:${section.level===1?'13':'11'}px;font-weight:700;color:#3D3D52;margin:0 0 5px;${section.level===1?'border-bottom:1px solid #E4E4EE;padding-bottom:3px;':''}">${section.title}</${tag}>${section.content}`;
-    body.appendChild(sec);
-  });
+    <div class="pdf-bd">
+      <div class="pdf-doc-type">${typeLabel}</div>
+      <h1>${title}</h1>
+      <div class="pdf-meta">
+        <span><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#9B9BAE" stroke-width="2"/><line x1="3" y1="10" x2="21" y2="10" stroke="#9B9BAE" stroke-width="2"/></svg>${dateStr}</span>
+        <span><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#9B9BAE" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="#9B9BAE" stroke-width="2"/></svg>${author}</span>
+        ${ref?`<span>Réf. ${ref}</span>`:''}
+      </div>
+      ${sectionsHTML}
+    </div>
+    <div class="pdf-ft">
+      <span class="pdf-ft-url">www.colasdigitalsolutions.com</span>
+      <span class="pdf-ft-page">01</span>
+      <div class="pdf-ft-deco">${footerDeco}</div>
+    </div>
+    <div class="pdf-classif">C2 - COLAS GROUP INTERNAL: Employees and partners who need to know.</div>`;
 
   return page;
 }
 
-function renderPreview(doc){
-  document.getElementById('previewTitle').textContent = doc.title;
-  const scroll = document.getElementById('previewScroll');
-  // Exit edit mode when rendering new doc
-  if(editMode){ editMode=false; document.getElementById('editToolbar').classList.add('hidden'); document.getElementById('editToggleBtn').classList.remove('btn-primary'); document.getElementById('editToggleBtn').classList.add('btn-secondary'); }
-  const page = buildPDFPage(doc);
-  scroll.innerHTML='';
+/* ═══════════════════════════════════════
+   REFRESH PREVIEW
+════════════════════════════════════════ */
+function refreshPreview(){
+  const scroll=document.getElementById('previewScroll');
+  const placeholder=document.getElementById('previewPlaceholder');
+  if(placeholder) placeholder.remove();
+
+  const old=scroll.querySelector('.pdf-page');
+  if(old && editMode){
+    // Save edits from contenteditable before rebuilding
+    // (user clicked refresh while in edit mode — we just toggle off)
+    editMode=false;
+    document.getElementById('editToolbar').classList.remove('show');
+    document.getElementById('editToggleBtn').classList.remove('btn-primary');
+    document.getElementById('editToggleBtn').classList.add('btn-secondary');
+  }
+  if(old) old.remove();
+
+  const page=buildPDFPage();
   scroll.appendChild(page);
+  document.getElementById('downloadBtn').style.display='';
 }
 
-// ── Edit mode ──
-// Uses a single contenteditable on the pdf-body div.
-// onmousedown="event.preventDefault()" on toolbar buttons preserves the selection.
+/* ═══════════════════════════════════════
+   EDIT MODE
+════════════════════════════════════════ */
 function toggleEditMode(){
-  editMode = !editMode;
-  const toolbar = document.getElementById('editToolbar');
-  const btn = document.getElementById('editToggleBtn');
-  const scroll = document.getElementById('previewScroll');
-  const pdfBody = scroll.querySelector('.pdf-body');
+  editMode=!editMode;
+  const toolbar=document.getElementById('editToolbar');
+  const btn=document.getElementById('editToggleBtn');
+  const page=document.querySelector('.pdf-page');
+  const bd=page?page.querySelector('.pdf-bd'):null;
 
   if(editMode){
-    toolbar.classList.remove('hidden');
+    toolbar.classList.add('show');
     btn.classList.add('btn-primary');
     btn.classList.remove('btn-secondary');
-    if(pdfBody){ pdfBody.contentEditable='true'; pdfBody.focus(); }
+    if(bd){bd.contentEditable='true';bd.focus();}
   } else {
-    toolbar.classList.add('hidden');
+    toolbar.classList.remove('show');
     btn.classList.remove('btn-primary');
     btn.classList.add('btn-secondary');
-    if(pdfBody) pdfBody.contentEditable='false';
+    if(bd) bd.contentEditable='false';
   }
 }
+function fmtCmd(cmd,val){ document.execCommand(cmd,false,val||null); }
 
-function fmtCmd(cmd, val){
-  // Because toolbar buttons use onmousedown+preventDefault, focus stays in pdfBody.
-  document.execCommand(cmd, false, val||null);
-}
+/* ═══════════════════════════════════════
+   PDF DOWNLOAD — pixel-perfect
+════════════════════════════════════════ */
+async function downloadPDF(){
+  let page=document.querySelector('.pdf-page');
+  if(!page){
+    refreshPreview();
+    page=document.querySelector('.pdf-page');
+  }
+  if(!page){alert('Aucun document à télécharger.');return;}
 
-// ── History ──
-function addToHistory(doc){
-  docHistory.unshift({title:doc.title,type:doc.docType,date:doc.date,doc});
-  renderHistory();
-}
-function renderHistory(){
-  const list = document.getElementById('historyList');
-  if(!docHistory.length){ list.innerHTML='<div class="history-empty">Aucun document généré</div>'; return; }
-  list.innerHTML=docHistory.slice(0,10).map((h,i)=>`
-    <div class="history-item" onclick="loadHistory(${i})">
-      <div class="history-item-title">${h.title}</div>
-      <div class="history-item-meta">${DOC_TYPE_LABELS[h.type]} &middot; ${h.date}</div>
-    </div>`).join('');
-}
-function loadHistory(i){
-  generatedDoc=docHistory[i].doc;
-  renderPreview(generatedDoc);
-  if(!previewVisible) togglePreview();
-}
+  const allBtns=[document.getElementById('downloadBtn'),document.getElementById('dlBtnPreview')];
+  allBtns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';}});
 
-// ── PDF Download via html2pdf (no print dialog) ──
-function downloadPDF(){
-  if(!generatedDoc){ alert('Aucun document à télécharger. Générez d\'abord un document.'); return; }
+  // Clone and prep
+  const clone=page.cloneNode(true);
+  clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  // Force exact dimensions for export
+  clone.style.cssText=`
+    width:794px !important;
+    min-height:1123px !important;
+    background:#fff !important;
+    display:flex !important;
+    flex-direction:column !important;
+    font-family:'DM Sans',Arial,sans-serif !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:hidden !important;
+  `;
 
-  // Use the live DOM (capturing any edits made in edit mode)
-  const scroll = document.getElementById('previewScroll');
-  const livePage = scroll.querySelector('.pdf-page');
+  // Apply inline styles to ALL children to prevent font/layout drift
+  const allEls=clone.querySelectorAll('*');
+  allEls.forEach(el=>{
+    const cs=window.getComputedStyle(el);
+    // Only force font-family so html2canvas picks it up
+    el.style.fontFamily=cs.fontFamily||"'DM Sans',Arial,sans-serif";
+  });
 
-  // Clone and clean up
-  const clone = livePage ? livePage.cloneNode(true) : buildPDFPage(generatedDoc);
-  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-  // Remove hover/focus styles from clone
-  clone.style.cssText = 'width:210mm;min-height:297mm;background:white;display:flex;flex-direction:column;position:relative;overflow:hidden;font-family:DM Sans,Arial,sans-serif;box-shadow:none;border-radius:0;margin:0;';
-
-  // Inject Google Font for export
-  const fontLink = document.createElement('link');
-  fontLink.rel='stylesheet';
-  fontLink.href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap';
-
-  // Wrapper
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText='position:absolute;left:-9999px;top:0;width:210mm;background:white;';
+  const wrapper=document.createElement('div');
+  wrapper.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#fff;z-index:-1;';
   wrapper.appendChild(clone);
   document.body.appendChild(wrapper);
 
-  const btn = document.getElementById('downloadBtn');
-  const origHTML = btn.innerHTML;
-  btn.disabled=true;
-  btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Génération…`;
+  const safeTitle=(document.getElementById('docTitle').value||'document').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim().replace(/\s+/g,'_')||'document';
 
-  const safeTitle=(generatedDoc.title||'document').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim().replace(/\s+/g,'_')||'document';
-
-  html2pdf().set({
-    margin:0,
-    filename:safeTitle+'.pdf',
-    image:{type:'jpeg',quality:0.97},
-    html2canvas:{scale:2,useCORS:true,logging:false,letterRendering:true,allowTaint:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['avoid-all']}
-  }).from(clone).save().then(()=>{
+  try{
+    await html2pdf().set({
+      margin:[0,0,0,0],
+      filename:safeTitle+'.pdf',
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{
+        scale:3,
+        useCORS:true,
+        logging:false,
+        letterRendering:true,
+        allowTaint:true,
+        width:794,
+        windowWidth:794,
+        backgroundColor:'#ffffff'
+      },
+      jsPDF:{unit:'px',format:[794,1123],orientation:'portrait',hotfixes:['px_scaling']},
+      pagebreak:{mode:['avoid-all']}
+    }).from(clone).save();
+  } catch(err){
+    alert('Erreur PDF : '+err.message);
+  } finally {
     document.body.removeChild(wrapper);
-    btn.disabled=false; btn.innerHTML=origHTML;
-  }).catch(err=>{
-    document.body.removeChild(wrapper);
-    btn.disabled=false; btn.innerHTML=origHTML;
-    alert('Erreur lors de la génération du PDF : '+err.message);
-  });
+    allBtns.forEach(b=>{
+      if(b){
+        b.disabled=false;
+        const isTopbar=b.id==='downloadBtn';
+        b.innerHTML=isTopbar?
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> Télécharger PDF'
+          :'<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> PDF';
+      }
+    });
+  }
 }
 
-// ── Init ──
-document.getElementById('tokenOverlay').addEventListener('click', function(e){ if(e.target===this) closeTokenModal(); });
-updateTokenStatus();
-if(!getToken()){
-  setTimeout(()=>addMessage('ai','Bienvenue. Pour activer la génération IA, cliquez sur <strong>Token</strong> en haut à droite et entrez votre GitHub Personal Access Token (permission <em>Models — Read-only</em>).'),500);
+/* ═══════════════════════════════════════
+   AI GENERATION (GitHub Models)
+════════════════════════════════════════ */
+const SYSTEM_PROMPT=`Tu es un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
+
+Réponds UNIQUEMENT avec un JSON valide (aucun texte avant/après, aucun markdown) :
+{
+  "title": "Titre du document",
+  "sections": [
+    { "level": 1, "title": "Titre section", "content": "HTML simple : <p>, <ul><li>, <strong>, <em>, <table>" }
+  ]
+}
+
+Règles :
+- Français professionnel et technique
+- Minimum 4 sections substantielles avec contenu réaliste
+- Tableaux quand pertinent
+- Contenu HTML simple uniquement (<p> <ul> <li> <strong> <em> <table> <tr> <th> <td>)`;
+
+async function generateWithAI(){
+  const token=getToken();
+  if(!token){
+    document.getElementById('aiStatus').innerHTML='<span style="color:var(--red)">Token non configuré — cliquez sur "Token IA" en haut</span>';
+    return;
+  }
+  const prompt=document.getElementById('aiPrompt').value.trim();
+  if(!prompt){document.getElementById('aiStatus').innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
+
+  const status=document.getElementById('aiStatus');
+  status.innerHTML='<span style="color:var(--grey2)">⏳ Génération en cours…</span>';
+  document.querySelector('.ai-box .btn-primary').disabled=true;
+
+  try{
+    const res=await fetch('https://models.inference.ai.azure.com/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      body:JSON.stringify({
+        model:'gpt-4o',
+        messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]}\nDemande: ${prompt}`}],
+        max_tokens:2500,temperature:0.4
+      })
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({error:{message:res.statusText}}));throw new Error(e.error?.message||`Erreur ${res.status}`);}
+    const data=await res.json();
+    const raw=data.choices[0].message.content.trim();
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    if(parsed.title) document.getElementById('docTitle').value=parsed.title;
+    if(parsed.sections&&parsed.sections.length){
+      sections=[];
+      sectionIdCounter=0;
+      parsed.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
+    }
+    status.innerHTML='<span style="color:var(--green)">✓ Document généré — cliquez sur Actualiser</span>';
+    refreshPreview();
+  } catch(err){
+    const msg=err.message;
+    if(msg.includes('401')||msg.includes('403')) status.innerHTML='<span style="color:var(--red)">Token invalide ou expiré</span>';
+    else if(msg.includes('429')) status.innerHTML='<span style="color:var(--red)">Limite atteinte — réessayez dans quelques secondes</span>';
+    else status.innerHTML=`<span style="color:var(--red)">Erreur : ${msg}</span>`;
+  }
+  document.querySelector('.ai-box .btn-primary').disabled=false;
+}
+
+/* ═══════════════════════════════════════
+   IMPORT WORD (.docx via mammoth.js)
+════════════════════════════════════════ */
+function handleDragOver(e){e.preventDefault();document.getElementById('importZone').classList.add('drag-over');}
+function handleDragLeave(){document.getElementById('importZone').classList.remove('drag-over');}
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('importZone').classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];
+  if(f) importWord(f);
+}
+
+async function importWord(file){
+  if(!file||!file.name.endsWith('.docx')){alert('Veuillez sélectionner un fichier .docx');return;}
+  const zone=document.getElementById('importZone');
+  zone.innerHTML='<div style="font-size:12px;color:var(--grey2)">⏳ Lecture du fichier…</div>';
+
+  try{
+    const arrayBuffer=await file.arrayBuffer();
+    const result=await mammoth.convertToHtml({arrayBuffer});
+    const html=result.value;
+
+    // Parse HTML into sections
+    const tmp=document.createElement('div');
+    tmp.innerHTML=html;
+
+    // Extract title from first h1
+    const firstH1=tmp.querySelector('h1');
+    if(firstH1) document.getElementById('docTitle').value=firstH1.textContent;
+
+    // Build sections from headings
+    const newSections=[];
+    let curSection=null;
+    let curContent='';
+
+    tmp.childNodes.forEach(node=>{
+      if(node.nodeType!==1) return;
+      const tag=node.tagName.toLowerCase();
+      if(tag==='h1'||tag==='h2'||tag==='h3'){
+        if(curSection){curSection.content=curContent;newSections.push(curSection);}
+        const level=(tag==='h1'||tag==='h2')?1:2;
+        curSection={level,title:node.textContent.trim()};
+        curContent='';
+      } else {
+        if(!curSection) return;
+        curContent+=node.outerHTML||'';
+      }
+    });
+    if(curSection){curSection.content=curContent;newSections.push(curSection);}
+
+    if(newSections.length){
+      sections=[];
+      sectionIdCounter=0;
+      newSections.forEach(s=>addSection(s.level,s.title,s.content));
+      refreshPreview();
+      zone.innerHTML=`<div class="import-zone-icon" style="background:var(--green);margin:0 auto 7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2"/></svg></div><div style="font-weight:600;font-size:12px;color:var(--green)">${newSections.length} sections importées</div>`;
+    } else {
+      zone.innerHTML='<div style="font-size:12px;color:var(--red)">Aucune section trouvée — vérifiez que le document contient des titres H1/H2/H3</div>';
+    }
+  } catch(err){
+    zone.innerHTML=`<div style="font-size:12px;color:var(--red)">Erreur : ${err.message}</div>`;
+  }
+  setTimeout(()=>{
+    zone.innerHTML=`<div class="import-zone-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5-5 5 5M12 5v12" stroke="currentColor" stroke-width="1.8"/></svg></div><div style="font-weight:600;margin-bottom:2px">Importer un .docx</div><div style="font-size:10px">Glissez-déposez ou cliquez — le contenu remplace les sections</div>`;
+    zone.onclick=()=>document.getElementById('wordFileInput').click();
+  },3000);
 }
 </script>
 </body>
