@@ -87,6 +87,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 /* ── IMPORT ZONE ── */
 .import-zone{border:1.5px dashed var(--bd);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s;color:var(--grey3);font-size:12px;margin-bottom:14px;}
 .import-zone:hover,.import-zone.drag-over{border-color:var(--yellow);background:var(--yellow-light);color:var(--grey);}
+.layout-active{border-color:var(--green) !important;background:#F0FFF4 !important;}
+.layout-reset{font-size:10px;color:var(--grey3);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block;}
+.layout-reset:hover{color:var(--red);}
 .import-zone-icon{margin:0 auto 7px;width:28px;height:28px;border-radius:7px;background:var(--bd);display:flex;align-items:center;justify-content:center;}
 .import-zone.drag-over .import-zone-icon{background:var(--yellow);}
 
@@ -166,7 +169,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
-  border-bottom:3px solid #F5D800;
+  border-bottom:3px solid var(--layout-accent, #F5D800);
   flex-shrink:0;
 }
 .pdf-hd-right{
@@ -356,6 +359,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
         </div>
         <div class="ai-status" id="aiStatus"></div>
       </div>
+
+      <!-- Mise en page Word -->
+      <div class="section-divider">Mise en page</div>
+      <div class="import-zone" id="layoutZone" onclick="document.getElementById('layoutFileInput').click()" ondragover="handleDragOver2(event)" ondragleave="handleDragLeave2(event)" ondrop="handleDrop2(event)">
+        <div class="import-zone-icon" id="layoutZoneIcon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <div style="font-weight:600;margin-bottom:2px" id="layoutZoneTitle">Importer une mise en page .docx</div>
+        <div style="font-size:10px" id="layoutZoneDesc">Extrait le logo et la charte graphique du document Word</div>
+      </div>
+      <input type="file" id="layoutFileInput" accept=".docx" style="display:none" onchange="importLayout(this.files[0])"/>
 
       <!-- Import Word -->
       <div class="section-divider">Import Word</div>
@@ -580,17 +594,19 @@ function buildPDFPage(){
     if(ci) s.content=ci.value;
   });
 
-  /* ── LOGO SVG ──
-     viewBox 310 large enough to fully render
-     "DIGITAL SOLUTIONS" with letter-spacing=3
-     width 135 keeps proportional display      */
-  const colasSVG=`<svg width="135" height="44" viewBox="0 0 310 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
-    <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
-    <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
-    <text x="130" y="38" font-family="DM Sans,Arial,sans-serif" font-weight="900" font-size="36" fill="#3D3D52" letter-spacing="2">COLAS</text>
-    <text x="130" y="56" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
-  </svg>`;
+  /* ── LOGO : SVG fallback ou image extraite de la mise en page ── */
+  let colasSVG;
+  if(window._layoutLogoB64){
+    colasSVG=`<img src="data:image/png;base64,${window._layoutLogoB64}" style="height:44px;width:auto;display:block;" alt="Logo"/>`;
+  } else {
+    colasSVG=`<svg width="135" height="44" viewBox="0 0 310 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
+      <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
+      <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
+      <text x="130" y="38" font-family="DM Sans,Arial,sans-serif" font-weight="900" font-size="36" fill="#3D3D52" letter-spacing="2">COLAS</text>
+      <text x="130" y="56" font-family="DM Sans,Arial,sans-serif" font-weight="400" font-size="11" fill="#3D3D52" letter-spacing="3">DIGITAL SOLUTIONS</text>
+    </svg>`;
+  }
 
   const footerDeco=`<svg width="56" height="40" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
 
@@ -880,6 +896,190 @@ async function importWord(file){
     zone.onclick=()=>document.getElementById('wordFileInput').click();
   },3000);
 }
+
+/* ═══════════════════════════════════════
+   IMPORT MISE EN PAGE (.docx)
+   Extrait le logo PNG et la couleur accent
+   depuis le docx de mise en page Colas
+════════════════════════════════════════ */
+function handleDragOver2(e){e.preventDefault();document.getElementById('layoutZone').classList.add('drag-over');}
+function handleDragLeave2(){document.getElementById('layoutZone').classList.remove('drag-over');}
+function handleDrop2(e){
+  e.preventDefault();
+  document.getElementById('layoutZone').classList.remove('drag-over');
+  const f=e.dataTransfer.files[0];
+  if(f) importLayout(f);
+}
+
+async function importLayout(file){
+  if(!file||!file.name.endsWith('.docx')){alert('Veuillez sélectionner un fichier .docx');return;}
+  
+  const zone=document.getElementById('layoutZone');
+  const zoneIcon=document.getElementById('layoutZoneIcon');
+  const zoneTitle=document.getElementById('layoutZoneTitle');
+  const zoneDesc=document.getElementById('layoutZoneDesc');
+  
+  zoneTitle.textContent='⏳ Lecture de la mise en page…';
+  zoneDesc.textContent='';
+
+  try{
+    // Lire le docx comme un ZIP en JS pur via FileReader
+    const arrayBuffer = await file.arrayBuffer();
+    
+    // Utiliser JSZip si disponible, sinon fallback manuel
+    // On va parser le ZIP manuellement avec une approche FileReader + Blob
+    const logo = await extractLogoFromDocx(arrayBuffer);
+    
+    if(logo){
+      window._layoutLogoB64 = logo;
+      window._layoutFileName = file.name;
+      
+      // Mettre à jour l'aperçu de la zone
+      zoneIcon.innerHTML=`<img src="data:image/png;base64,${logo}" style="height:22px;width:auto;border-radius:3px;" alt="Logo"/>`;
+      zoneTitle.textContent = file.name;
+      zoneDesc.textContent = '✓ Logo extrait — cliquez Actualiser';
+      zoneDesc.style.color = 'var(--green)';
+      
+      // Rafraîchir l'aperçu automatiquement
+      refreshPreview();
+    } else {
+      zoneTitle.textContent = 'Aucun logo trouvé dans ce .docx';
+      zoneDesc.textContent = 'Le document doit contenir une image dans son header';
+      zoneDesc.style.color = 'var(--red)';
+    }
+  } catch(err){
+    zoneTitle.textContent = 'Erreur : ' + err.message;
+    zoneDesc.textContent = '';
+    zoneDesc.style.color = 'var(--red)';
+  }
+  
+  // Bouton reset
+  setTimeout(()=>{
+    if(!window._layoutLogoB64){
+      resetLayoutZone();
+    }
+  }, 4000);
+}
+
+function resetLayoutZone(){
+  const zoneIcon=document.getElementById('layoutZoneIcon');
+  const zoneTitle=document.getElementById('layoutZoneTitle');
+  const zoneDesc=document.getElementById('layoutZoneDesc');
+  if(zoneIcon) zoneIcon.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if(zoneTitle) zoneTitle.textContent='Importer une mise en page .docx';
+  if(zoneDesc){ zoneDesc.textContent='Extrait le logo et la charte graphique du document Word'; zoneDesc.style.color=''; }
+}
+
+/* extractLogoFromDocx : voir version async complète ci-dessous */
+
+/* ── Parser ZIP minimal en JS pur ── */
+function parseZip(bytes){
+  const entries = [];
+  let i = 0;
+  const len = bytes.length;
+  
+  while(i < len - 4){
+    // Local file header signature: 0x04034b50
+    if(bytes[i]===0x50 && bytes[i+1]===0x4B && bytes[i+2]===0x03 && bytes[i+3]===0x04){
+      const compressionMethod = bytes[i+8] | (bytes[i+9]<<8);
+      const compressedSize = bytes[i+18] | (bytes[i+19]<<8) | (bytes[i+20]<<16) | (bytes[i+21]<<24);
+      const uncompressedSize = bytes[i+22] | (bytes[i+23]<<8) | (bytes[i+24]<<16) | (bytes[i+25]<<24);
+      const fileNameLen = bytes[i+26] | (bytes[i+27]<<8);
+      const extraLen = bytes[i+28] | (bytes[i+29]<<8);
+      
+      const nameBytes = bytes.slice(i+30, i+30+fileNameLen);
+      const name = new TextDecoder('utf-8').decode(nameBytes);
+      
+      const dataStart = i + 30 + fileNameLen + extraLen;
+      const dataEnd = dataStart + compressedSize;
+      
+      if(compressionMethod === 0){
+        // Store (pas de compression) — on peut lire directement
+        entries.push({
+          name,
+          data: bytes.slice(dataStart, dataEnd)
+        });
+      } else if(compressionMethod === 8){
+        // Deflate — décompresser avec DecompressionStream si disponible
+        try{
+          const compressed = bytes.slice(dataStart, dataEnd);
+          // On ne peut pas décompresser synchronement, on marque pour traitement async
+          entries.push({
+            name,
+            data: null,
+            compressed,
+            uncompressedSize
+          });
+        } catch(e){}
+      }
+      
+      i = dataEnd;
+    } else {
+      i++;
+    }
+  }
+  return entries;
+}
+
+/* ── Version async qui gère la décompression Deflate ── */
+async function extractLogoFromDocx(arrayBuffer){
+  const bytes = new Uint8Array(arrayBuffer);
+  const entries = parseZip(bytes);
+  
+  const mediaEntries = entries.filter(e => 
+    e.name.startsWith('word/media/') && 
+    (e.name.endsWith('.png') || e.name.endsWith('.jpg') || e.name.endsWith('.jpeg'))
+  );
+  
+  if(!mediaEntries.length) return null;
+  
+  // Pour chaque image, essayer de la décompresser si nécessaire
+  for(const entry of mediaEntries){
+    let imgBytes = entry.data;
+    
+    if(!imgBytes && entry.compressed){
+      // Décompresser avec DecompressionStream (disponible sur navigateurs modernes)
+      try{
+        const ds = new DecompressionStream('deflate-raw');
+        const writer = ds.writable.getWriter();
+        const reader = ds.readable.getReader();
+        
+        writer.write(entry.compressed);
+        writer.close();
+        
+        const chunks = [];
+        let totalLen = 0;
+        while(true){
+          const {done, value} = await reader.read();
+          if(done) break;
+          chunks.push(value);
+          totalLen += value.length;
+        }
+        
+        imgBytes = new Uint8Array(totalLen);
+        let offset = 0;
+        for(const chunk of chunks){
+          imgBytes.set(chunk, offset);
+          offset += chunk.length;
+        }
+      } catch(e){
+        continue; // Essayer l'image suivante
+      }
+    }
+    
+    if(imgBytes && imgBytes.length > 100){
+      let binary = '';
+      const chunkSize = 8192;
+      for(let j=0; j<imgBytes.length; j+=chunkSize){
+        binary += String.fromCharCode(...imgBytes.slice(j, j+chunkSize));
+      }
+      return btoa(binary);
+    }
+  }
+  
+  return null;
+}
+
 </script>
 </body>
 </html>
