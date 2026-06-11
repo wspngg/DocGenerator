@@ -149,8 +149,8 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
    PDF PAGE  (used both in preview & export)
    ════════════════════════════════════════ */
 .pdf-page{
-  width:794px; /* 210mm at 96dpi */
-  min-height:1123px; /* 297mm */
+  width:794px;
+  min-height:1123px;
   background:#fff;
   box-shadow:0 4px 24px rgba(0,0,0,.10);
   border-radius:2px;
@@ -161,7 +161,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   flex-shrink:0;
   animation:fadein .2s ease;
 }
-/* header */
 .pdf-hd{
   padding:18px 32px 14px;
   display:flex;
@@ -179,7 +178,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   font-family:'DM Sans',Arial,sans-serif;
 }
 .pdf-hd-right strong{display:block;font-size:10px;color:#3D3D52;font-weight:600;}
-/* body */
 .pdf-bd{
   flex:1;
   padding:22px 32px 18px;
@@ -205,7 +203,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 .pdf-bd table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
 .pdf-bd table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
 .pdf-bd table tr:nth-child(even) td{background:#FAFAFA;}
-/* footer */
 .pdf-ft{
   padding:7px 32px 8px;
   display:flex;align-items:center;
@@ -428,7 +425,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
     </div>
 
     <div class="preview-scroll" id="previewScroll">
-      <!-- PDF page inserted here -->
       <div id="previewPlaceholder" style="text-align:center;padding:60px 20px;color:var(--grey3);font-size:13px;">
         <div style="width:48px;height:48px;background:var(--bd);border-radius:12px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#9B9BAE" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="#9B9BAE" stroke-width="2"/></svg>
@@ -562,6 +558,8 @@ function liveUpdateTitle(){
 
 /* ═══════════════════════════════════════
    BUILD PDF PAGE (DOM)
+   FIX : viewBox élargi à 310 pour éviter
+   la troncature de "DIGITAL SOLUTIONS"
 ════════════════════════════════════════ */
 function buildPDFPage(){
   const title=document.getElementById('docTitle').value||'Sans titre';
@@ -571,7 +569,7 @@ function buildPDFPage(){
   const dateStr=dateRaw?new Date(dateRaw+'T12:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}):new Date().toLocaleDateString('fr-FR');
   const typeLabel=DOC_TYPE_LABELS[currentDocType]||currentDocType;
 
-  // Collect section edits from DOM textareas before reading sections[]
+  // Sync section content from DOM textareas before reading sections[]
   document.querySelectorAll('.section-item').forEach(el=>{
     const id=parseInt(el.dataset.id);
     const s=sections.find(s=>s.id===id);
@@ -582,7 +580,11 @@ function buildPDFPage(){
     if(ci) s.content=ci.value;
   });
 
-  const colasSVG=`<svg width="110" height="44" viewBox="0 0 260 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  /* ── LOGO SVG ──
+     viewBox 310 large enough to fully render
+     "DIGITAL SOLUTIONS" with letter-spacing=3
+     width 135 keeps proportional display      */
+  const colasSVG=`<svg width="135" height="44" viewBox="0 0 310 104" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
     <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
     <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
@@ -637,8 +639,6 @@ function refreshPreview(){
 
   const old=scroll.querySelector('.pdf-page');
   if(old && editMode){
-    // Save edits from contenteditable before rebuilding
-    // (user clicked refresh while in edit mode — we just toggle off)
     editMode=false;
     document.getElementById('editToolbar').classList.remove('show');
     document.getElementById('editToggleBtn').classList.remove('btn-primary');
@@ -676,7 +676,7 @@ function toggleEditMode(){
 function fmtCmd(cmd,val){ document.execCommand(cmd,false,val||null); }
 
 /* ═══════════════════════════════════════
-   PDF DOWNLOAD — pixel-perfect
+   PDF DOWNLOAD
 ════════════════════════════════════════ */
 async function downloadPDF(){
   let page=document.querySelector('.pdf-page');
@@ -689,10 +689,8 @@ async function downloadPDF(){
   const allBtns=[document.getElementById('downloadBtn'),document.getElementById('dlBtnPreview')];
   allBtns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';}});
 
-  // Clone and prep
   const clone=page.cloneNode(true);
   clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
-  // Force exact dimensions for export
   clone.style.cssText=`
     width:794px !important;
     min-height:1123px !important;
@@ -707,11 +705,9 @@ async function downloadPDF(){
     overflow:hidden !important;
   `;
 
-  // Apply inline styles to ALL children to prevent font/layout drift
   const allEls=clone.querySelectorAll('*');
   allEls.forEach(el=>{
     const cs=window.getComputedStyle(el);
-    // Only force font-family so html2canvas picks it up
     el.style.fontFamily=cs.fontFamily||"'DM Sans',Arial,sans-serif";
   });
 
@@ -842,15 +838,12 @@ async function importWord(file){
     const result=await mammoth.convertToHtml({arrayBuffer});
     const html=result.value;
 
-    // Parse HTML into sections
     const tmp=document.createElement('div');
     tmp.innerHTML=html;
 
-    // Extract title from first h1
     const firstH1=tmp.querySelector('h1');
     if(firstH1) document.getElementById('docTitle').value=firstH1.textContent;
 
-    // Build sections from headings
     const newSections=[];
     let curSection=null;
     let curContent='';
