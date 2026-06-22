@@ -120,19 +120,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 .edit-select{padding:4px 6px;border-radius:5px;font-size:11px;font-family:var(--f);border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;outline:none;}
 .edit-indicator{font-size:10px;color:var(--grey2);padding:2px 8px;background:rgba(245,216,0,.2);border-radius:10px;border:1px solid rgba(245,216,0,.4);margin-left:auto;}
 
-/* ── TOKEN MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(30,30,40,.4);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;}
-.overlay.show{display:flex;}
-.modal{background:var(--white);border-radius:12px;padding:24px;width:440px;box-shadow:0 16px 50px rgba(0,0,0,.14);}
-.modal-title{font-size:15px;font-weight:700;color:var(--grey);margin-bottom:4px;}
-.modal-sub{font-size:12px;color:var(--grey2);margin-bottom:16px;line-height:1.55;}
-.form-group{margin-bottom:12px;}
-.form-label{font-size:10px;font-weight:700;color:var(--grey2);margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.4px;}
-.form-input{width:100%;padding:8px 11px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;}
-.form-input:focus{border-color:var(--yellow);}
-.modal-note{background:var(--yellow-light);border:1px solid rgba(245,216,0,.4);border-radius:7px;padding:8px 11px;font-size:11px;color:#7A6200;margin-bottom:12px;line-height:1.5;}
-.modal-actions{display:flex;gap:7px;justify-content:flex-end;}
-
 /* ── STATUS DOT ── */
 .status-dot{width:6px;height:6px;border-radius:50%;background:var(--grey3);flex-shrink:0;display:inline-block;}
 .status-dot.ok{background:var(--green);}
@@ -230,23 +217,6 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 </head>
 <body>
 
-<!-- TOKEN MODAL -->
-<div class="overlay" id="tokenOverlay">
-  <div class="modal">
-    <div class="modal-title">Token GitHub Models</div>
-    <div class="modal-sub">Le token est stocké localement dans votre navigateur et n'est jamais envoyé ailleurs.</div>
-    <div class="form-group">
-      <label class="form-label">Personal Access Token</label>
-      <input class="form-input" id="tokenInput" type="password" placeholder="github_pat_XXXXXXXXXXXX…" autocomplete="off"/>
-    </div>
-    <div class="modal-note">Sur <strong>github.com/settings/tokens</strong>, créez un token avec la permission <strong>Account → Models → Read-only</strong>.</div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeTokenModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="saveToken()">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-logo">
@@ -261,13 +231,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   </div>
   <div class="topbar-div"></div>
   <div class="topbar-right">
-    <span class="status-dot" id="statusDot"></span>
-    <span style="font-size:11px;color:var(--grey2)" id="statusText">IA désactivée</span>
-    <button class="btn btn-ghost" onclick="openTokenModal()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Token IA
-    </button>
-    <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
+        <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
       Télécharger PDF
     </button>
@@ -472,7 +436,6 @@ const DOC_TYPE_LABELS = {
 (function init(){
   const today = new Date();
   document.getElementById('docDate').value = today.toISOString().split('T')[0];
-  updateTokenStatus();
   addSection(1, 'Introduction', '<p>Présentation du contexte et des objectifs du document.</p>');
   addSection(2, 'Contexte', '<p>Décrivez ici le contexte de la mission ou du sujet.</p>');
   addSection(1, 'Analyse', '<p>Détail des éléments analysés.</p>');
@@ -480,32 +443,6 @@ const DOC_TYPE_LABELS = {
   addSection(1, 'Conclusion', '<p>Synthèse et prochaines étapes.</p>');
   refreshPreview();
 })();
-
-/* ═══════════════════════════════════════
-   TOKEN
-════════════════════════════════════════ */
-function getToken(){ return localStorage.getItem('docgen_gh_token')||''; }
-function saveToken(){
-  const t=document.getElementById('tokenInput').value.trim();
-  if(!t){alert('Token vide !');return;}
-  localStorage.setItem('docgen_gh_token',t);
-  closeTokenModal();
-  updateTokenStatus();
-}
-function openTokenModal(){
-  const t=getToken();
-  if(t) document.getElementById('tokenInput').value=t;
-  document.getElementById('tokenOverlay').classList.add('show');
-}
-function closeTokenModal(){ document.getElementById('tokenOverlay').classList.remove('show'); }
-function updateTokenStatus(){
-  const t=getToken();
-  const dot=document.getElementById('statusDot');
-  const text=document.getElementById('statusText');
-  if(t){dot.className='status-dot ok';text.textContent='IA active';}
-  else{dot.className='status-dot err';text.textContent='IA désactivée';}
-}
-document.getElementById('tokenOverlay').addEventListener('click',function(e){if(e.target===this)closeTokenModal();});
 
 /* ═══════════════════════════════════════
    DOC TYPE
