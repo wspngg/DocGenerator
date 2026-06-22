@@ -769,9 +769,10 @@ async function downloadPDF(){
       '<div id="printRoot"></div>'+
       '</body></html>';
 
-    // iframe caché : impression sans popup, rendu vectoriel net
+    // iframe hors écran MAIS avec une vraie taille (sinon aucune mise en page
+    // n'est calculée et les mesures de hauteur sont nulles)
     const iframe=document.createElement('iframe');
-    iframe.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;';
+    iframe.style.cssText='position:fixed;left:-10000px;top:0;width:850px;height:1200px;border:0;';
     document.body.appendChild(iframe);
 
     const idoc=iframe.contentWindow.document;
@@ -795,13 +796,18 @@ async function downloadPDF(){
     probe.className='print-page';
     probe.innerHTML=headerHTML+'<div class="pdf-bd"></div>'+footerHTML;
     printRoot.appendChild(probe);
-    const pageH=probe.getBoundingClientRect().height;
-    const hH=probe.querySelector('.pdf-hd')?probe.querySelector('.pdf-hd').getBoundingClientRect().height:0;
-    const fH=probe.querySelector('.print-footer')?probe.querySelector('.print-footer').getBoundingClientRect().height:0;
+    let pageH=probe.getBoundingClientRect().height;
+    let hH=probe.querySelector('.pdf-hd')?probe.querySelector('.pdf-hd').getBoundingClientRect().height:0;
+    let fH=probe.querySelector('.print-footer')?probe.querySelector('.print-footer').getBoundingClientRect().height:0;
     printRoot.removeChild(probe);
 
-    const avail1=Math.floor(pageH-hH-fH-2);   // espace corps page 1 (avec entête)
-    const availN=Math.floor(pageH-fH-2);       // espace corps pages suivantes
+    // Garde-fous : si une mesure échoue, on retombe sur les valeurs A4 @96dpi
+    if(!pageH || pageH<500) pageH=1122;          // 297mm ≈ 1122px
+    if(!hH || hH<0 || hH>pageH) hH=0;
+    if(!fH || fH<0 || fH>pageH) fH=70;
+
+    const avail1=Math.max(200, Math.floor(pageH-hH-fH-2));   // espace corps page 1 (avec entête)
+    const availN=Math.max(200, Math.floor(pageH-fH-2));       // espace corps pages suivantes
 
     function newPage(withHeader){
       const p=doc.createElement('div');
