@@ -224,6 +224,9 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   border-top:1px solid #F0F0F0;flex-shrink:0;
   font-family:'DM Sans',Arial,sans-serif;
 }
+/* Pagination PDF : éviter les coupures au milieu des éléments */
+.pdf-bd h1,.pdf-bd h2,.pdf-bd h3{break-after:avoid;page-break-after:avoid;}
+.pdf-bd table,.pdf-bd tr,.pdf-bd img,.pdf-ft,.pdf-classif{break-inside:avoid;page-break-inside:avoid;}
 </style>
 </head>
 <body>
@@ -705,11 +708,16 @@ async function downloadPDF(){
   const allBtns=[document.getElementById('downloadBtn'),document.getElementById('dlBtnPreview')];
   allBtns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';}});
 
+  // ── 1. Attendre que les polices (DM Sans) soient chargées avant capture ──
+  try{ if(document.fonts && document.fonts.ready) await document.fonts.ready; }catch(e){}
+
   const clone=page.cloneNode(true);
   clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  // Pas d'overflow:hidden (rogne le contenu), height:auto pour laisser le contenu se déployer
   clone.style.cssText=`
     width:794px !important;
     min-height:1123px !important;
+    height:auto !important;
     background:#fff !important;
     display:flex !important;
     flex-direction:column !important;
@@ -718,7 +726,6 @@ async function downloadPDF(){
     border-radius:0 !important;
     margin:0 !important;
     padding:0 !important;
-    overflow:hidden !important;
   `;
 
   const allEls=clone.querySelectorAll('*');
@@ -727,35 +734,40 @@ async function downloadPDF(){
     el.style.fontFamily=cs.fontFamily||"'DM Sans',Arial,sans-serif";
   });
 
+  // ── 2. Wrapper en position:absolute (PAS fixed) → html2canvas capture correctement ──
   const wrapper=document.createElement('div');
-  wrapper.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#fff;z-index:-1;';
+  wrapper.style.cssText='position:absolute;left:-10000px;top:0;width:794px;background:#fff;';
   wrapper.appendChild(clone);
   document.body.appendChild(wrapper);
+
+  // Laisser le layout + images se stabiliser
+  await new Promise(r=>setTimeout(r,80));
 
   const safeTitle=(document.getElementById('docTitle').value||'document').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim().replace(/\s+/g,'_')||'document';
 
   try{
     await html2pdf().set({
-      margin:[0,0,0,0],
+      margin:0,
       filename:safeTitle+'.pdf',
       image:{type:'jpeg',quality:0.98},
       html2canvas:{
-        scale:3,
+        scale:2,                 // ── 3. scale 2 au lieu de 3 → évite le canvas blanc (limite de surface)
         useCORS:true,
         logging:false,
         letterRendering:true,
-        allowTaint:true,
+        backgroundColor:'#ffffff',
         width:794,
         windowWidth:794,
-        backgroundColor:'#ffffff'
+        scrollX:0,
+        scrollY:0
       },
-      jsPDF:{unit:'px',format:[794,1123],orientation:'portrait',hotfixes:['px_scaling']},
-      pagebreak:{mode:['avoid-all']}
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},  // ── 4. A4 mm → mapping propre, fini le sliver de 2e page
+      pagebreak:{mode:['css','legacy'],avoid:['h1','h2','h3','tr','table','.pdf-ft','.pdf-classif']}
     }).from(clone).save();
   } catch(err){
     alert('Erreur PDF : '+err.message);
   } finally {
-    document.body.removeChild(wrapper);
+    if(wrapper.parentNode) document.body.removeChild(wrapper);
     allBtns.forEach(b=>{
       if(b){
         b.disabled=false;
