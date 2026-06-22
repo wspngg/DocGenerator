@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DocGenerator — Colas Digital Solutions</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -703,71 +702,12 @@ async function downloadPDF(){
     refreshPreview();
     page=document.querySelector('.pdf-page');
   }
-  if(!page){alert('Aucun document à télécharger.');return;}
+  if(!page){alert('Aucun document à générer.');return;}
 
   const allBtns=[document.getElementById('downloadBtn'),document.getElementById('dlBtnPreview')];
   allBtns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';}});
 
-  // ── 1. Attendre que les polices (DM Sans) soient chargées avant capture ──
-  try{ if(document.fonts && document.fonts.ready) await document.fonts.ready; }catch(e){}
-
-  const clone=page.cloneNode(true);
-  clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
-  // Pas d'overflow:hidden (rogne le contenu), height:auto pour laisser le contenu se déployer
-  clone.style.cssText=`
-    width:794px !important;
-    min-height:1123px !important;
-    height:auto !important;
-    background:#fff !important;
-    display:flex !important;
-    flex-direction:column !important;
-    font-family:'DM Sans',Arial,sans-serif !important;
-    box-shadow:none !important;
-    border-radius:0 !important;
-    margin:0 !important;
-    padding:0 !important;
-  `;
-
-  const allEls=clone.querySelectorAll('*');
-  allEls.forEach(el=>{
-    const cs=window.getComputedStyle(el);
-    el.style.fontFamily=cs.fontFamily||"'DM Sans',Arial,sans-serif";
-  });
-
-  // ── 2. Wrapper en position:absolute (PAS fixed) → html2canvas capture correctement ──
-  const wrapper=document.createElement('div');
-  wrapper.style.cssText='position:absolute;left:-10000px;top:0;width:794px;background:#fff;';
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-
-  // Laisser le layout + images se stabiliser
-  await new Promise(r=>setTimeout(r,80));
-
-  const safeTitle=(document.getElementById('docTitle').value||'document').replace(/[^a-zA-Z0-9\-_ ]/g,'').trim().replace(/\s+/g,'_')||'document';
-
-  try{
-    await html2pdf().set({
-      margin:0,
-      filename:safeTitle+'.pdf',
-      image:{type:'jpeg',quality:0.98},
-      html2canvas:{
-        scale:2,                 // ── 3. scale 2 au lieu de 3 → évite le canvas blanc (limite de surface)
-        useCORS:true,
-        logging:false,
-        letterRendering:true,
-        backgroundColor:'#ffffff',
-        width:794,
-        windowWidth:794,
-        scrollX:0,
-        scrollY:0
-      },
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},  // ── 4. A4 mm → mapping propre, fini le sliver de 2e page
-      pagebreak:{mode:['css','legacy'],avoid:['h1','h2','h3','tr','table','.pdf-ft','.pdf-classif']}
-    }).from(clone).save();
-  } catch(err){
-    alert('Erreur PDF : '+err.message);
-  } finally {
-    if(wrapper.parentNode) document.body.removeChild(wrapper);
+  const restoreBtns=()=>{
     allBtns.forEach(b=>{
       if(b){
         b.disabled=false;
@@ -777,6 +717,144 @@ async function downloadPDF(){
           :'<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> PDF';
       }
     });
+  };
+
+  try{
+    // Clone propre, sans zones éditables
+    const clone=page.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+
+    // Découpe les morceaux réutilisés sur chaque page
+    const headerEl=clone.querySelector('.pdf-hd');
+    const bodyEl=clone.querySelector('.pdf-bd');
+    const ftEl=clone.querySelector('.pdf-ft');
+    const clEl=clone.querySelector('.pdf-classif');
+
+    const headerHTML=headerEl?headerEl.outerHTML:'';
+    const bodyInnerHTML=bodyEl?bodyEl.innerHTML:'';
+    // Modèle de pied de page (pied + bandeau de classification) cloné sur chaque page
+    const footWrap=document.createElement('div');
+    footWrap.className='print-footer';
+    if(ftEl) footWrap.appendChild(ftEl.cloneNode(true));
+    if(clEl) footWrap.appendChild(clEl.cloneNode(true));
+    const footerHTML=footWrap.outerHTML;
+
+    // Récupère TOUS les styles de la page (PDF identique à l'aperçu)
+    let css='';
+    document.querySelectorAll('style').forEach(s=>{css+=s.textContent+'\n';});
+
+    const rawTitle=(document.getElementById('docTitle').value||'document').trim()||'document';
+    const safeTitle=rawTitle.replace(/[^a-zA-Z0-9\-_ àâäéèêëïîôöùûüçÀÂÄÉÈÊËÏÎÔÖÙÛÜÇ]/g,'').trim()||'document';
+
+    const printHTML=
+      '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">'+
+      '<title>'+safeTitle+'</title>'+
+      '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">'+
+      '<style>'+css+'</style>'+
+      '<style>'+
+      '@page{ size:A4; margin:0; }'+
+      'html,body{ margin:0; padding:0; background:#fff; }'+
+      '*{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }'+
+      /* chaque page A4 réelle : entête (1re page) + corps + pied numéroté */
+      '.print-page{ width:210mm; height:297mm; margin:0 auto; background:#fff; box-sizing:border-box;'+
+      '  overflow:hidden; display:flex; flex-direction:column; break-after:page; page-break-after:always; }'+
+      '.print-page:last-child{ break-after:auto; page-break-after:auto; }'+
+      '.print-page .pdf-bd{ flex:0 0 auto; min-height:0; overflow:hidden; }'+
+      '.print-footer{ margin-top:auto; }'+
+      '.print-footer .pdf-ft{ flex-shrink:0; }'+
+      '.pdf-ft-page{ display:inline !important; }'+
+      '.pdf-page{ box-shadow:none !important; border-radius:0 !important; }'+
+      '</style></head><body>'+
+      '<div id="srcBody" style="position:absolute;left:-9999px;top:0;width:210mm;">'+bodyInnerHTML+'</div>'+
+      '<div id="printRoot"></div>'+
+      '</body></html>';
+
+    // iframe caché : impression sans popup, rendu vectoriel net
+    const iframe=document.createElement('iframe');
+    iframe.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;';
+    document.body.appendChild(iframe);
+
+    const idoc=iframe.contentWindow.document;
+    idoc.open(); idoc.write(printHTML); idoc.close();
+    const win=iframe.contentWindow, doc=win.document;
+
+    // Attendre chargement + polices avant de mesurer (les hauteurs en dépendent)
+    await new Promise(res=>{
+      if(doc.readyState==='complete') res();
+      else win.addEventListener('load',res,{once:true});
+    });
+    try{ if(doc.fonts && doc.fonts.ready) await doc.fonts.ready; }catch(e){}
+    await new Promise(r=>setTimeout(r,200));
+
+    const printRoot=doc.getElementById('printRoot');
+    const srcBody=doc.getElementById('srcBody');
+    const blocks=Array.from(srcBody.children);
+
+    // ── Mesure des hauteurs réelles (page, entête, pied) ──
+    const probe=doc.createElement('div');
+    probe.className='print-page';
+    probe.innerHTML=headerHTML+'<div class="pdf-bd"></div>'+footerHTML;
+    printRoot.appendChild(probe);
+    const pageH=probe.getBoundingClientRect().height;
+    const hH=probe.querySelector('.pdf-hd')?probe.querySelector('.pdf-hd').getBoundingClientRect().height:0;
+    const fH=probe.querySelector('.print-footer')?probe.querySelector('.print-footer').getBoundingClientRect().height:0;
+    printRoot.removeChild(probe);
+
+    const avail1=Math.floor(pageH-hH-fH-2);   // espace corps page 1 (avec entête)
+    const availN=Math.floor(pageH-fH-2);       // espace corps pages suivantes
+
+    function newPage(withHeader){
+      const p=doc.createElement('div');
+      p.className='print-page';
+      p.innerHTML=(withHeader?headerHTML:'')+'<div class="pdf-bd page-body"></div>'+footerHTML;
+      printRoot.appendChild(p);
+      const body=p.querySelector('.page-body');
+      const limit=withHeader?avail1:availN;
+      body.style.height=limit+'px';
+      return {body,limit};
+    }
+
+    // ── Répartition des blocs sur les pages ──
+    let pg=newPage(true);
+    for(let i=0;i<blocks.length;i++){
+      const blk=blocks[i];
+      pg.body.appendChild(blk);
+      const isHead=(blk.tagName==='H2'||blk.tagName==='H3');
+      if(pg.body.scrollHeight>pg.limit){
+        // Ne tient pas : on bascule le bloc sur une nouvelle page
+        if(pg.body.children.length>1){
+          pg.body.removeChild(blk);
+          pg=newPage(false);
+          pg.body.appendChild(blk);
+        }
+        // (si le bloc seul dépasse une page entière, on le laisse tel quel)
+      } else if(isHead && pg.body.scrollHeight>pg.limit-70 && i<blocks.length-1){
+        // Évite un titre orphelin tout en bas de page
+        pg.body.removeChild(blk);
+        pg=newPage(false);
+        pg.body.appendChild(blk);
+      }
+    }
+    srcBody.remove();
+
+    // ── Numérotation réelle « Page X / Y » ──
+    const pages=Array.from(printRoot.querySelectorAll('.print-page'));
+    const total=pages.length;
+    pages.forEach((p,idx)=>{
+      const num=p.querySelector('.pdf-ft-page');
+      if(num) num.textContent='Page '+(idx+1)+' / '+total;
+    });
+
+    await new Promise(r=>setTimeout(r,60));
+    win.focus();
+    win.print();
+
+    // Nettoyage après la boîte de dialogue d'impression
+    setTimeout(()=>{ if(iframe.parentNode) document.body.removeChild(iframe); }, 1500);
+  } catch(err){
+    alert('Erreur lors de la génération : '+err.message);
+  } finally {
+    restoreBtns();
   }
 }
 
