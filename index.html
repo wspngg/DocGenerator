@@ -759,7 +759,7 @@ async function downloadPDF(){
       '.print-page{ width:210mm; height:297mm; margin:0 auto; background:#fff; box-sizing:border-box;'+
       '  overflow:hidden; display:flex; flex-direction:column; break-after:page; page-break-after:always; }'+
       '.print-page:last-child{ break-after:auto; page-break-after:auto; }'+
-      '.print-page .pdf-bd{ flex:0 0 auto; min-height:0; overflow:hidden; }'+
+      '.print-page .pdf-bd{ flex:0 0 auto; min-height:0; }'+
       '.print-footer{ margin-top:auto; }'+
       '.print-footer .pdf-ft{ flex-shrink:0; }'+
       '.pdf-ft-page{ display:inline !important; }'+
@@ -816,17 +816,17 @@ async function downloadPDF(){
       printRoot.appendChild(p);
       const body=p.querySelector('.page-body');
       const limit=withHeader?avail1:availN;
-      body.style.height=limit+'px';
       return {body,limit};
     }
 
     // ── Répartition des blocs sur les pages ──
+    // On laisse le corps grandir et on mesure sa hauteur réelle (offsetHeight)
     let pg=newPage(true);
     for(let i=0;i<blocks.length;i++){
       const blk=blocks[i];
       pg.body.appendChild(blk);
       const isHead=(blk.tagName==='H2'||blk.tagName==='H3');
-      if(pg.body.scrollHeight>pg.limit){
+      if(pg.body.offsetHeight>pg.limit){
         // Ne tient pas : on bascule le bloc sur une nouvelle page
         if(pg.body.children.length>1){
           pg.body.removeChild(blk);
@@ -834,7 +834,7 @@ async function downloadPDF(){
           pg.body.appendChild(blk);
         }
         // (si le bloc seul dépasse une page entière, on le laisse tel quel)
-      } else if(isHead && pg.body.scrollHeight>pg.limit-70 && i<blocks.length-1){
+      } else if(isHead && pg.body.offsetHeight>pg.limit-70 && i<blocks.length-1){
         // Évite un titre orphelin tout en bas de page
         pg.body.removeChild(blk);
         pg=newPage(false);
