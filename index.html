@@ -821,11 +821,6 @@ Règles :
 - Contenu HTML simple uniquement (<p> <ul> <li> <strong> <em> <table> <tr> <th> <td>)`;
 
 async function generateWithAI(){
-  const token=getToken();
-  if(!token){
-    document.getElementById('aiStatus').innerHTML='<span style="color:var(--red)">Token non configuré — cliquez sur "Token IA" en haut</span>';
-    return;
-  }
   const prompt=document.getElementById('aiPrompt').value.trim();
   if(!prompt){document.getElementById('aiStatus').innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
 
@@ -834,31 +829,29 @@ async function generateWithAI(){
   document.querySelector('.ai-box .btn-primary').disabled=true;
 
   try{
-    const res=await fetch('https://models.inference.ai.azure.com/chat/completions',{
+    // Appel du proxy serverless — le token vit côté serveur (Vercel : GITHUB_AI_KEY)
+    const res=await fetch('/api/generate',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'gpt-4o',
-        messages:[{role:'system',content:SYSTEM_PROMPT},{role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]}\nDemande: ${prompt}`}],
-        max_tokens:2500,temperature:0.4
+        prompt,
+        docType:DOC_TYPE_LABELS[currentDocType]||currentDocType
       })
     });
-    if(!res.ok){const e=await res.json().catch(()=>({error:{message:res.statusText}}));throw new Error(e.error?.message||`Erreur ${res.status}`);}
-    const data=await res.json();
-    const raw=data.choices[0].message.content.trim();
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const data=await res.json().catch(()=>({error:res.statusText}));
+    if(!res.ok||data.error) throw new Error(data.error||`Erreur ${res.status}`);
 
-    if(parsed.title) document.getElementById('docTitle').value=parsed.title;
-    if(parsed.sections&&parsed.sections.length){
+    if(data.title) document.getElementById('docTitle').value=data.title;
+    if(data.sections&&data.sections.length){
       sections=[];
       sectionIdCounter=0;
-      parsed.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
+      data.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
     }
     status.innerHTML='<span style="color:var(--green)">✓ Document généré — cliquez sur Actualiser</span>';
     refreshPreview();
   } catch(err){
-    const msg=err.message;
-    if(msg.includes('401')||msg.includes('403')) status.innerHTML='<span style="color:var(--red)">Token invalide ou expiré</span>';
+    const msg=err.message||'';
+    if(msg.includes('401')||msg.includes('403')||/token|unauthor/i.test(msg)) status.innerHTML='<span style="color:var(--red)">Token serveur invalide/expiré — vérifiez GITHUB_AI_KEY sur Vercel</span>';
     else if(msg.includes('429')) status.innerHTML='<span style="color:var(--red)">Limite atteinte — réessayez dans quelques secondes</span>';
     else status.innerHTML=`<span style="color:var(--red)">Erreur : ${msg}</span>`;
   }
