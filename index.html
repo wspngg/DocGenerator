@@ -856,7 +856,7 @@ async function generateWithAI(){
           {role:'system',content:SYSTEM_PROMPT},
           {role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]||currentDocType}\nDemande: ${prompt}`}
         ],
-        max_tokens:2500,
+        max_tokens:8000,
         temperature:0.4
       })
     });
@@ -867,9 +867,12 @@ async function generateWithAI(){
     }
 
     const data=await res.json();
-    const raw=data.choices[0].message.content.trim();
-    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
-
+    let raw=data.choices[0].message.content.trim().replace(/```json|```/g,'').trim();
+    // on ne garde que du premier { au dernier } (ignore un éventuel texte parasite)
+    const first=raw.indexOf('{'), last=raw.lastIndexOf('}');
+    if(first>=0 && last>first) raw=raw.slice(first,last+1);
+    const parsed=JSON.parse(raw);
+    
     if(parsed.title) document.getElementById('docTitle').value=parsed.title;
     if(parsed.sections&&parsed.sections.length){
       sections=[];
