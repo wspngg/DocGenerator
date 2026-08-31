@@ -836,7 +836,7 @@ async function generateWithAI(){
   const prompt=document.getElementById('aiPrompt').value.trim();
   const status=document.getElementById('aiStatus');
   if(!prompt){status.innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
-  if(!GEMINI_KEY||GEMINI_KEY==='COLLE_TA_CLE_ICI'){
+  if(!GEMINI_KEY||GEMINI_KEY==='AQ.Ab8RN6J-iy9K6ssBuVgxbwIOPSKUHKZiRNnjpWpAn4KZVjeJig'){
     status.innerHTML='<span style="color:var(--red)">Clé Gemini manquante — renseignez GEMINI_KEY en haut du script</span>';return;
   }
 
@@ -851,7 +851,7 @@ async function generateWithAI(){
         'Authorization':`Bearer ${GEMINI_KEY}`
       },
       body:JSON.stringify({
-        model:'gemini-2.5-flash',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
+        model:'gemini-3.6-flash'',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
         messages:[
           {role:'system',content:SYSTEM_PROMPT},
           {role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]||currentDocType}\nDemande: ${prompt}`}
