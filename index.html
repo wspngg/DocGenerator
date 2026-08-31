@@ -851,7 +851,7 @@ async function generateWithAI(){
         'Authorization':`Bearer ${GEMINI_KEY}`
       },
       body:JSON.stringify({
-        model:'gemini-3.6-flash'',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
+        model:'gemini-3.6-flash',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
         messages:[
           {role:'system',content:SYSTEM_PROMPT},
           {role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]||currentDocType}\nDemande: ${prompt}`}
