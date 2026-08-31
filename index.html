@@ -836,7 +836,7 @@ async function generateWithAI(){
   const prompt=document.getElementById('aiPrompt').value.trim();
   const status=document.getElementById('aiStatus');
   if(!prompt){status.innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
-  if(!GEMINI_KEY||GEMINI_KEY==='AQ.Ab8RN6J-iy9K6ssBuVgxbwIOPSKUHKZiRNnjpWpAn4KZVjeJig'){
+    if(!GEMINI_KEY){
     status.innerHTML='<span style="color:var(--red)">Clé Gemini manquante — renseignez GEMINI_KEY en haut du script</span>';return;
   }
 
