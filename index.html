@@ -418,6 +418,17 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 
 <script>
 /* ═══════════════════════════════════════
+   ⚠️  CLÉ API GEMINI — VISIBLE CÔTÉ CLIENT
+   ───────────────────────────────────────
+   Cette clé est lisible par quiconque ouvre la page ou le code source.
+   À n'utiliser QUE si :
+     • le dépôt GitHub est PRIVÉ (sinon la clé fuit et Google la révoque),
+     • l'accès au site est protégé (mot de passe Vercel / SSO / VPN Colas).
+   Récupère ta clé sur https://aistudio.google.com  → « Get API key ».
+════════════════════════════════════════ */
+const GEMINI_KEY = "AQ.Ab8RN6J-iy9K6ssBuVgxbwIOPSKUHKZiRNnjpWpAn4KZVjeJig"; // ex : "AIzaSy........................"
+
+/* ═══════════════════════════════════════
    STATE
 ════════════════════════════════════════ */
 let currentDocType = 'rapport';
@@ -511,8 +522,6 @@ function liveUpdateTitle(){
 
 /* ═══════════════════════════════════════
    BUILD PDF PAGE (DOM)
-   FIX : viewBox élargi à 310 pour éviter
-   la troncature de "DIGITAL SOLUTIONS"
 ════════════════════════════════════════ */
 function buildPDFPage(){
   const title=document.getElementById('docTitle').value||'Sans titre';
@@ -802,7 +811,10 @@ async function downloadPDF(){
 }
 
 /* ═══════════════════════════════════════
-   AI GENERATION (GitHub Models)
+   AI GENERATION — Google Gemini (appel direct client)
+   ───────────────────────────────────────
+   Plus de proxy /api/generate : on appelle Gemini directement
+   avec GEMINI_KEY (défini en haut du script).
 ════════════════════════════════════════ */
 const SYSTEM_PROMPT=`Tu es un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
 
@@ -822,37 +834,54 @@ Règles :
 
 async function generateWithAI(){
   const prompt=document.getElementById('aiPrompt').value.trim();
-  if(!prompt){document.getElementById('aiStatus').innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
-
   const status=document.getElementById('aiStatus');
+  if(!prompt){status.innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
+  if(!GEMINI_KEY||GEMINI_KEY==='COLLE_TA_CLE_ICI'){
+    status.innerHTML='<span style="color:var(--red)">Clé Gemini manquante — renseignez GEMINI_KEY en haut du script</span>';return;
+  }
+
   status.innerHTML='<span style="color:var(--grey2)">⏳ Génération en cours…</span>';
   document.querySelector('.ai-box .btn-primary').disabled=true;
 
   try{
-    // Appel du proxy serverless — le token vit côté serveur (Vercel : GITHUB_AI_KEY)
-    const res=await fetch('/api/generate',{
+    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':`Bearer ${GEMINI_KEY}`
+      },
       body:JSON.stringify({
-        prompt,
-        docType:DOC_TYPE_LABELS[currentDocType]||currentDocType
+        model:'gemini-2.5-flash',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
+        messages:[
+          {role:'system',content:SYSTEM_PROMPT},
+          {role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]||currentDocType}\nDemande: ${prompt}`}
+        ],
+        max_tokens:2500,
+        temperature:0.4
       })
     });
-    const data=await res.json().catch(()=>({error:res.statusText}));
-    if(!res.ok||data.error) throw new Error(data.error||`Erreur ${res.status}`);
 
-    if(data.title) document.getElementById('docTitle').value=data.title;
-    if(data.sections&&data.sections.length){
+    if(!res.ok){
+      const t=await res.text().catch(()=>res.statusText);
+      throw new Error(`API ${res.status} : ${t}`);
+    }
+
+    const data=await res.json();
+    const raw=data.choices[0].message.content.trim();
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    if(parsed.title) document.getElementById('docTitle').value=parsed.title;
+    if(parsed.sections&&parsed.sections.length){
       sections=[];
       sectionIdCounter=0;
-      data.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
+      parsed.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
     }
     status.innerHTML='<span style="color:var(--green)">✓ Document généré — cliquez sur Actualiser</span>';
     refreshPreview();
   } catch(err){
     const msg=err.message||'';
-    if(msg.includes('401')||msg.includes('403')||/token|unauthor/i.test(msg)) status.innerHTML='<span style="color:var(--red)">Token serveur invalide/expiré — vérifiez GITHUB_AI_KEY sur Vercel</span>';
-    else if(msg.includes('429')) status.innerHTML='<span style="color:var(--red)">Limite atteinte — réessayez dans quelques secondes</span>';
+    if(/401|403|API_KEY|unauthor|invalid/i.test(msg)) status.innerHTML='<span style="color:var(--red)">Clé Gemini invalide — vérifiez GEMINI_KEY</span>';
+    else if(msg.includes('429')) status.innerHTML='<span style="color:var(--red)">Quota atteint — réessayez dans quelques instants</span>';
     else status.innerHTML=`<span style="color:var(--red)">Erreur : ${msg}</span>`;
   }
   document.querySelector('.ai-box .btn-primary').disabled=false;
@@ -925,8 +954,6 @@ async function importWord(file){
 
 /* ═══════════════════════════════════════
    IMPORT MISE EN PAGE (.docx)
-   Extrait le logo PNG et la couleur accent
-   depuis le docx de mise en page Colas
 ════════════════════════════════════════ */
 function handleDragOver2(e){e.preventDefault();document.getElementById('layoutZone').classList.add('drag-over');}
 function handleDragLeave2(){document.getElementById('layoutZone').classList.remove('drag-over');}
@@ -939,34 +966,28 @@ function handleDrop2(e){
 
 async function importLayout(file){
   if(!file||!file.name.endsWith('.docx')){alert('Veuillez sélectionner un fichier .docx');return;}
-  
+
   const zone=document.getElementById('layoutZone');
   const zoneIcon=document.getElementById('layoutZoneIcon');
   const zoneTitle=document.getElementById('layoutZoneTitle');
   const zoneDesc=document.getElementById('layoutZoneDesc');
-  
+
   zoneTitle.textContent='⏳ Lecture de la mise en page…';
   zoneDesc.textContent='';
 
   try{
-    // Lire le docx comme un ZIP en JS pur via FileReader
     const arrayBuffer = await file.arrayBuffer();
-    
-    // Utiliser JSZip si disponible, sinon fallback manuel
-    // On va parser le ZIP manuellement avec une approche FileReader + Blob
     const logo = await extractLogoFromDocx(arrayBuffer);
-    
+
     if(logo){
       window._layoutLogoB64 = logo;
       window._layoutFileName = file.name;
-      
-      // Mettre à jour l'aperçu de la zone
+
       zoneIcon.innerHTML=`<img src="data:image/png;base64,${logo}" style="height:22px;width:auto;border-radius:3px;" alt="Logo"/>`;
       zoneTitle.textContent = file.name;
       zoneDesc.textContent = '✓ Logo extrait — cliquez Actualiser';
       zoneDesc.style.color = 'var(--green)';
-      
-      // Rafraîchir l'aperçu automatiquement
+
       refreshPreview();
     } else {
       zoneTitle.textContent = 'Aucun logo trouvé dans ce .docx';
@@ -978,8 +999,7 @@ async function importLayout(file){
     zoneDesc.textContent = '';
     zoneDesc.style.color = 'var(--red)';
   }
-  
-  // Bouton reset
+
   setTimeout(()=>{
     if(!window._layoutLogoB64){
       resetLayoutZone();
@@ -996,49 +1016,35 @@ function resetLayoutZone(){
   if(zoneDesc){ zoneDesc.textContent='Extrait le logo et la charte graphique du document Word'; zoneDesc.style.color=''; }
 }
 
-/* extractLogoFromDocx : voir version async complète ci-dessous */
-
 /* ── Parser ZIP minimal en JS pur ── */
 function parseZip(bytes){
   const entries = [];
   let i = 0;
   const len = bytes.length;
-  
+
   while(i < len - 4){
-    // Local file header signature: 0x04034b50
     if(bytes[i]===0x50 && bytes[i+1]===0x4B && bytes[i+2]===0x03 && bytes[i+3]===0x04){
       const compressionMethod = bytes[i+8] | (bytes[i+9]<<8);
       const compressedSize = bytes[i+18] | (bytes[i+19]<<8) | (bytes[i+20]<<16) | (bytes[i+21]<<24);
       const uncompressedSize = bytes[i+22] | (bytes[i+23]<<8) | (bytes[i+24]<<16) | (bytes[i+25]<<24);
       const fileNameLen = bytes[i+26] | (bytes[i+27]<<8);
       const extraLen = bytes[i+28] | (bytes[i+29]<<8);
-      
+
       const nameBytes = bytes.slice(i+30, i+30+fileNameLen);
       const name = new TextDecoder('utf-8').decode(nameBytes);
-      
+
       const dataStart = i + 30 + fileNameLen + extraLen;
       const dataEnd = dataStart + compressedSize;
-      
+
       if(compressionMethod === 0){
-        // Store (pas de compression) — on peut lire directement
-        entries.push({
-          name,
-          data: bytes.slice(dataStart, dataEnd)
-        });
+        entries.push({ name, data: bytes.slice(dataStart, dataEnd) });
       } else if(compressionMethod === 8){
-        // Deflate — décompresser avec DecompressionStream si disponible
         try{
           const compressed = bytes.slice(dataStart, dataEnd);
-          // On ne peut pas décompresser synchronement, on marque pour traitement async
-          entries.push({
-            name,
-            data: null,
-            compressed,
-            uncompressedSize
-          });
+          entries.push({ name, data: null, compressed, uncompressedSize });
         } catch(e){}
       }
-      
+
       i = dataEnd;
     } else {
       i++;
@@ -1051,28 +1057,26 @@ function parseZip(bytes){
 async function extractLogoFromDocx(arrayBuffer){
   const bytes = new Uint8Array(arrayBuffer);
   const entries = parseZip(bytes);
-  
-  const mediaEntries = entries.filter(e => 
-    e.name.startsWith('word/media/') && 
+
+  const mediaEntries = entries.filter(e =>
+    e.name.startsWith('word/media/') &&
     (e.name.endsWith('.png') || e.name.endsWith('.jpg') || e.name.endsWith('.jpeg'))
   );
-  
+
   if(!mediaEntries.length) return null;
-  
-  // Pour chaque image, essayer de la décompresser si nécessaire
+
   for(const entry of mediaEntries){
     let imgBytes = entry.data;
-    
+
     if(!imgBytes && entry.compressed){
-      // Décompresser avec DecompressionStream (disponible sur navigateurs modernes)
       try{
         const ds = new DecompressionStream('deflate-raw');
         const writer = ds.writable.getWriter();
         const reader = ds.readable.getReader();
-        
+
         writer.write(entry.compressed);
         writer.close();
-        
+
         const chunks = [];
         let totalLen = 0;
         while(true){
@@ -1081,7 +1085,7 @@ async function extractLogoFromDocx(arrayBuffer){
           chunks.push(value);
           totalLen += value.length;
         }
-        
+
         imgBytes = new Uint8Array(totalLen);
         let offset = 0;
         for(const chunk of chunks){
@@ -1089,10 +1093,10 @@ async function extractLogoFromDocx(arrayBuffer){
           offset += chunk.length;
         }
       } catch(e){
-        continue; // Essayer l'image suivante
+        continue;
       }
     }
-    
+
     if(imgBytes && imgBytes.length > 100){
       let binary = '';
       const chunkSize = 8192;
@@ -1102,7 +1106,7 @@ async function extractLogoFromDocx(arrayBuffer){
       return btoa(binary);
     }
   }
-  
+
   return null;
 }
 
