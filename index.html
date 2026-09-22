@@ -1,220 +1,831 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DocGenerator — Colas Digital Solutions</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --yellow:#F5D800;--yellow-dark:#D4B800;--yellow-light:#FFFDE7;
-  --navy:#2C4965;--grey:#3D3D52;--grey2:#6B6B82;--grey3:#9B9BAE;
-  --bg:#F4F4F8;--white:#FFFFFF;--bd:#E4E4EE;
-  --red:#E53E3E;--green:#22C55E;
-  --f:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
-}
-body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100vh;display:flex;flex-direction:column;}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DocGenerator — Colas Digital Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --yellow: #F5D800;
+      --yellow-dark: #D4B800;
+      --yellow-light: #FFFDE7;
+      --navy: #2C4965;
+      --grey: #3D3D52;
+      --grey2: #6B6B82;
+      --grey3: #9B9BAE;
+      --bg: #F4F4F8;
+      --white: #FFFFFF;
+      --bd: #E4E4EE;
+      --red: #E53E3E;
+      --green: #22C55E;
+      --f: 'DM Sans', sans-serif;
+      --fm: 'DM Mono', monospace;
+    }
+    
+    body {
+      font-family: var(--f);
+      background: var(--bg);
+      color: var(--grey);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* ── TOPBAR ── */
-.topbar{background:var(--white);border-bottom:1px solid var(--bd);padding:0 20px;height:50px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
-.topbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;}
-.logo-text{font-size:13px;font-weight:700;color:var(--grey);letter-spacing:.1px;}
-.logo-sub{font-size:10px;font-weight:500;color:var(--grey3);letter-spacing:.6px;text-transform:uppercase;display:block;margin-top:-2px;}
-.topbar-div{width:1px;height:20px;background:var(--bd);}
-.topbar-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--bd);
+      padding: 0 20px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;line-height:1;}
-.btn svg{flex-shrink:0;}
-.btn-primary{background:var(--yellow);color:var(--grey);}
-.btn-primary:hover{background:var(--yellow-dark);}
-.btn-secondary{background:var(--white);color:var(--grey2);border:1px solid var(--bd);}
-.btn-secondary:hover{border-color:var(--grey3);color:var(--grey);}
-.btn-ghost{background:transparent;color:var(--grey2);border:1px solid transparent;}
-.btn-ghost:hover{background:var(--bg);border-color:var(--bd);}
-.btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA;}
-.btn-danger:hover{background:#FEE2E2;}
-.btn:disabled{opacity:.4;cursor:not-allowed;}
-.btn-icon{padding:6px;border-radius:6px;}
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+    }
 
-/* ── LAYOUT ── */
-.app-body{display:flex;flex:1;height:calc(100vh - 50px);overflow:hidden;}
+    .logo-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--grey);
+      letter-spacing: 0.1px;
+    }
 
-/* ── LEFT PANEL (form) ── */
-.form-panel{width:320px;flex-shrink:0;background:var(--white);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;}
-.panel-header{padding:14px 16px 10px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:8px;}
-.panel-header-title{font-size:12px;font-weight:700;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;flex:1;}
-.panel-scroll{flex:1;overflow-y:auto;padding:14px 16px;}
+    .logo-sub {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--grey3);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
 
-/* ── FORM FIELDS ── */
-.field-group{margin-bottom:14px;}
-.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey3);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
-.field-input{width:100%;padding:8px 10px;border:1.5px solid var(--bd);border-radius:7px;font-family:var(--f);font-size:13px;color:var(--grey);outline:none;transition:border-color .15s;background:var(--white);}
-.field-input:focus{border-color:var(--yellow);}
-.field-textarea{resize:vertical;min-height:64px;line-height:1.55;}
-.field-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239B9BAE' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;}
+    .topbar-div {
+      width: 1px;
+      height: 20px;
+      background: var(--bd);
+    }
 
-/* ── SECTIONS ── */
-.sections-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.sections-list{display:flex;flex-direction:column;gap:6px;}
-.section-item{border:1.5px solid var(--bd);border-radius:8px;background:var(--bg);overflow:hidden;transition:border-color .15s;}
-.section-item:focus-within{border-color:rgba(245,216,0,.6);}
-.section-item-header{display:flex;align-items:center;gap:6px;padding:7px 9px;background:var(--white);border-bottom:1px solid var(--bd);cursor:pointer;user-select:none;}
-.section-item-header:hover{background:var(--yellow-light);}
-.section-drag{color:var(--grey3);cursor:grab;display:flex;}
-.section-level{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:var(--bd);color:var(--grey2);padding:2px 6px;border-radius:4px;flex-shrink:0;cursor:pointer;}
-.section-level.l1{background:var(--yellow);color:var(--grey);}
-.section-title-input{flex:1;border:none;background:transparent;font-family:var(--f);font-size:12px;font-weight:600;color:var(--grey);outline:none;}
-.section-title-input::placeholder{color:var(--grey3);}
-.section-del{color:var(--grey3);transition:color .12s;display:flex;padding:2px;}
-.section-del:hover{color:var(--red);cursor:pointer;}
-.section-body{padding:8px 9px;}
-.section-content-input{width:100%;min-height:70px;border:none;background:transparent;font-family:var(--f);font-size:12px;color:var(--grey);outline:none;resize:vertical;line-height:1.6;}
-.section-content-input::placeholder{color:var(--grey3);}
+    .topbar-right {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
 
-/* ── AI ASSISTANT ── */
-.ai-box{border:1.5px solid rgba(245,216,0,.5);border-radius:8px;background:var(--yellow-light);padding:10px 11px;margin-bottom:14px;}
-.ai-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7A6200;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
-.ai-input-row{display:flex;gap:6px;align-items:flex-end;}
-.ai-textarea{flex:1;padding:7px 9px;border:1.5px solid rgba(245,216,0,.6);border-radius:6px;font-family:var(--f);font-size:12px;color:var(--grey);background:var(--white);outline:none;resize:none;min-height:54px;line-height:1.5;}
-.ai-textarea:focus{border-color:var(--yellow-dark);}
-.ai-textarea::placeholder{color:var(--grey3);}
-.ai-status{font-size:10px;color:var(--grey2);margin-top:6px;min-height:14px;}
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-family: var(--f);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+      line-height: 1;
+    }
 
-/* ── IMPORT ZONE ── */
-.import-zone{border:1.5px dashed var(--bd);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s;color:var(--grey3);font-size:12px;margin-bottom:14px;}
-.import-zone:hover,.import-zone.drag-over{border-color:var(--yellow);background:var(--yellow-light);color:var(--grey);}
-.layout-active{border-color:var(--green) !important;background:#F0FFF4 !important;}
-.layout-reset{font-size:10px;color:var(--grey3);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block;}
-.layout-reset:hover{color:var(--red);}
-.import-zone-icon{margin:0 auto 7px;width:28px;height:28px;border-radius:7px;background:var(--bd);display:flex;align-items:center;justify-content:center;}
-.import-zone.drag-over .import-zone-icon{background:var(--yellow);}
+    .btn svg { flex-shrink: 0; }
+    .btn-primary { background: var(--yellow); color: var(--grey); }
+    .btn-primary:hover { background: var(--yellow-dark); }
+    .btn-secondary { background: var(--white); color: var(--grey2); border: 1px solid var(--bd); }
+    .btn-secondary:hover { border-color: var(--grey3); color: var(--grey); }
+    .btn-ghost { background: transparent; color: var(--grey2); border: 1px solid transparent; }
+    .btn-ghost:hover { background: var(--bg); border-color: var(--bd); }
+    .btn-danger { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+    .btn-danger:hover { background: #FEE2E2; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ── DIVIDER ── */
-.section-divider{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey3);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
-.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--bd);}
+    /* ── LAYOUT ── */
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 50px);
+      overflow: hidden;
+    }
 
-/* ── DOC TYPES ── */
-.doc-types{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px;}
-.doc-type{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:6px;cursor:pointer;transition:all .12s;border:1.5px solid var(--bd);background:var(--white);}
-.doc-type:hover{border-color:rgba(245,216,0,.5);background:var(--yellow-light);}
-.doc-type.active{background:var(--yellow-light);border-color:var(--yellow);}
-.doc-type-icon{width:22px;height:22px;border-radius:5px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--grey3);}
-.doc-type.active .doc-type-icon{background:var(--yellow);color:var(--grey);}
-.doc-type-name{font-size:11px;font-weight:500;color:var(--grey);line-height:1.3;}
+    /* ── LEFT PANEL (form) ── */
+    .form-panel {
+      width: 320px;
+      flex-shrink: 0;
+      background: var(--white);
+      border-right: 1px solid var(--bd);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-/* ── MAIN PREVIEW ── */
-.preview-panel{flex:1;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
-.preview-top{padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--white);display:flex;align-items:center;gap:8px;}
-.preview-top-title{font-size:12px;font-weight:600;color:var(--grey);flex:1;}
-.preview-scroll{flex:1;overflow-y:auto;padding:24px;display:flex;justify-content:center;}
+    .panel-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* ── EDIT TOOLBAR ── */
-.edit-toolbar{padding:6px 12px;background:var(--white);border-bottom:1px solid var(--bd);display:none;align-items:center;gap:4px;flex-wrap:wrap;}
-.edit-toolbar.show{display:flex;}
-.edit-btn{padding:4px 7px;border-radius:5px;font-size:12px;font-family:var(--f);font-weight:500;border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;transition:all .12s;line-height:1.3;}
-.edit-btn:hover{border-color:var(--yellow);background:var(--yellow-light);}
-.edit-sep{width:1px;height:14px;background:var(--bd);margin:0 2px;}
-.edit-select{padding:4px 6px;border-radius:5px;font-size:11px;font-family:var(--f);border:1px solid var(--bd);background:var(--white);color:var(--grey);cursor:pointer;outline:none;}
-.edit-indicator{font-size:10px;color:var(--grey2);padding:2px 8px;background:rgba(245,216,0,.2);border-radius:10px;border:1px solid rgba(245,216,0,.4);margin-left:auto;}
+    .panel-header-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--grey);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
 
-/* ── STATUS DOT ── */
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--grey3);flex-shrink:0;display:inline-block;}
-.status-dot.ok{background:var(--green);}
-.status-dot.err{background:var(--red);}
+    .panel-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+    }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--bd);border-radius:10px;}
+    /* ── FORM FIELDS ── */
+    .field-group {
+      margin-bottom: 14px;
+    }
 
-/* ── ANIMATIONS ── */
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .field-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--grey3);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-/* ════════════════════════════════════════
-   PDF PAGE  (used both in preview & export)
-   ════════════════════════════════════════ */
-.pdf-page{
-  width:794px;
-  min-height:1123px;
-  background:#fff;
-  box-shadow:0 4px 24px rgba(0,0,0,.10);
-  border-radius:2px;
-  display:flex;
-  flex-direction:column;
-  font-family:'DM Sans',Arial,sans-serif;
-  overflow:hidden;
-  flex-shrink:0;
-  animation:fadein .2s ease;
-}
-.pdf-hd{
-  padding:18px 32px 14px;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  border-bottom:3px solid var(--layout-accent, #F5D800);
-  flex-shrink:0;
-}
-.pdf-hd-right{
-  text-align:right;
-  font-size:9px;
-  color:#9B9BAE;
-  line-height:1.7;
-  padding-top:4px;
-  font-family:'DM Sans',Arial,sans-serif;
-}
-.pdf-hd-right strong{display:block;font-size:10px;color:#3D3D52;font-weight:600;}
-.pdf-bd{
-  flex:1;
-  padding:22px 32px 18px;
-  font-size:10.5px;
-  color:#3D3D52;
-  line-height:1.75;
-  font-family:'DM Sans',Arial,sans-serif;
-}
-.pdf-doc-type{
-  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
-  color:#9B9BAE;margin-bottom:4px;font-family:'DM Sans',Arial,sans-serif;
-}
-.pdf-bd h1{font-size:18px;font-weight:700;color:#3D3D52;margin:0 0 8px;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd .pdf-meta{display:flex;gap:14px;font-size:8.5px;color:#9B9BAE;margin-bottom:16px;padding-bottom:12px;border-bottom:1.5px solid #F5D800;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd .pdf-meta span{display:flex;align-items:center;gap:3px;}
-.pdf-bd h2{font-size:12px;font-weight:700;color:#3D3D52;margin:18px 0 5px;padding-bottom:3px;border-bottom:1px solid #E4E4EE;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd h3{font-size:10.5px;font-weight:600;color:#3D3D52;margin:12px 0 3px;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd p{margin-bottom:6px;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd ul{margin:4px 0 7px 15px;}
-.pdf-bd li{margin-bottom:2px;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd ol{margin:4px 0 7px 15px;}
-.pdf-bd table{width:100%;border-collapse:collapse;margin:8px 0;font-size:9.5px;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-bd table th{background:#F5D800;color:#3D3D52;padding:5px 8px;text-align:left;font-weight:600;}
-.pdf-bd table td{padding:5px 8px;border-bottom:1px solid #E4E4EE;}
-.pdf-bd table tr:nth-child(even) td{background:#FAFAFA;}
-.pdf-ft{
-  padding:7px 32px 8px;
-  display:flex;align-items:center;
-  border-top:1px solid #E4E4EE;
-  min-height:36px;
-  position:relative;overflow:hidden;
-  flex-shrink:0;
-  background:#fff;
-}
-.pdf-ft-url{font-size:7.5px;font-weight:700;color:#2C4965;font-family:'DM Sans',Arial,sans-serif;}
-.pdf-ft-page{font-size:8px;font-weight:700;color:#2C4965;position:absolute;left:50%;transform:translateX(-50%);font-family:'DM Sans',Arial,sans-serif;}
-.pdf-ft-deco{position:absolute;right:-3px;bottom:-2px;}
-.pdf-classif{
-  font-size:7px;color:#29CF00;text-align:center;
-  padding:3px 32px 4px;background:#fff;letter-spacing:.15px;
-  border-top:1px solid #F0F0F0;flex-shrink:0;
-  font-family:'DM Sans',Arial,sans-serif;
-}
-/* Pagination PDF : éviter les coupures au milieu des éléments */
-.pdf-bd h1,.pdf-bd h2,.pdf-bd h3{break-after:avoid;page-break-after:avoid;}
-.pdf-bd table,.pdf-bd tr,.pdf-bd img,.pdf-ft,.pdf-classif{break-inside:avoid;page-break-inside:avoid;}
-</style>
+    .field-input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid var(--bd);
+      border-radius: 7px;
+      font-family: var(--f);
+      font-size: 13px;
+      color: var(--grey);
+      outline: none;
+      transition: border-color 0.15s;
+      background: var(--white);
+    }
+
+    .field-input:focus {
+      border-color: var(--yellow);
+    }
+
+    .field-textarea {
+      resize: vertical;
+      min-height: 64px;
+      line-height: 1.55;
+    }
+
+    .field-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239B9BAE' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+
+    /* ── SECTIONS ── */
+    .sections-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .sections-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-item {
+      border: 1.5px solid var(--bd);
+      border-radius: 8px;
+      background: var(--bg);
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .section-item:focus-within {
+      border-color: rgba(245, 216, 0, 0.6);
+    }
+
+    .section-item-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 9px;
+      background: var(--white);
+      border-bottom: 1px solid var(--bd);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-item-header:hover {
+      background: var(--yellow-light);
+    }
+
+    .section-drag {
+      color: var(--grey3);
+      cursor: grab;
+      display: flex;
+    }
+
+    .section-level {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--bd);
+      color: var(--grey2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .section-level.l1 {
+      background: var(--yellow);
+      color: var(--grey);
+    }
+
+    .section-title-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: var(--f);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--grey);
+      outline: none;
+    }
+
+    .section-title-input::placeholder {
+      color: var(--grey3);
+    }
+
+    .section-del {
+      color: var(--grey3);
+      transition: color 0.12s;
+      display: flex;
+      padding: 2px;
+      cursor: pointer;
+    }
+
+    .section-del:hover {
+      color: var(--red);
+    }
+
+    .section-body {
+      padding: 8px 9px;
+    }
+
+    .section-content-input {
+      width: 100%;
+      min-height: 70px;
+      border: none;
+      background: transparent;
+      font-family: var(--f);
+      font-size: 12px;
+      color: var(--grey);
+      outline: none;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .section-content-input::placeholder {
+      color: var(--grey3);
+    }
+
+    /* ── AI ASSISTANT ── */
+    .ai-box {
+      border: 1.5px solid rgba(245, 216, 0, 0.5);
+      border-radius: 8px;
+      background: var(--yellow-light);
+      padding: 10px 11px;
+      margin-bottom: 14px;
+    }
+
+    .ai-box-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #7A6200;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ai-textarea {
+      width: 100%;
+      padding: 7px 9px;
+      border: 1.5px solid rgba(245, 216, 0, 0.6);
+      border-radius: 6px;
+      font-family: var(--f);
+      font-size: 12px;
+      color: var(--grey);
+      background: var(--white);
+      outline: none;
+      resize: none;
+      min-height: 54px;
+      line-height: 1.5;
+    }
+
+    .ai-textarea:focus {
+      border-color: var(--yellow-dark);
+    }
+
+    .ai-textarea::placeholder {
+      color: var(--grey3);
+    }
+
+    .ai-input-row {
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+      margin-top: 6px;
+    }
+
+    .ai-status {
+      font-size: 10px;
+      color: var(--grey2);
+      margin-top: 6px;
+      min-height: 14px;
+    }
+
+    /* ── IMPORT ZONE ── */
+    .import-zone {
+      border: 1.5px dashed var(--bd);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--grey3);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .import-zone:hover,
+    .import-zone.drag-over {
+      border-color: var(--yellow);
+      background: var(--yellow-light);
+      color: var(--grey);
+    }
+
+    .import-zone-icon {
+      margin: 0 auto 7px;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .import-zone.drag-over .import-zone-icon {
+      background: var(--yellow);
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--grey3);
+      margin: 16px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--bd);
+    }
+
+    /* ── DOC TYPES ── */
+    .doc-types {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .doc-type {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.12s;
+      border: 1.5px solid var(--bd);
+      background: var(--white);
+    }
+
+    .doc-type:hover {
+      border-color: rgba(245, 216, 0, 0.5);
+      background: var(--yellow-light);
+    }
+
+    .doc-type.active {
+      background: var(--yellow-light);
+      border-color: var(--yellow);
+    }
+
+    .doc-type-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--grey3);
+    }
+
+    .doc-type.active .doc-type-icon {
+      background: var(--yellow);
+      color: var(--grey);
+    }
+
+    .doc-type-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--grey);
+      line-height: 1.3;
+    }
+
+    /* ── MAIN PREVIEW ── */
+    .preview-panel {
+      flex: 1;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .preview-top {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--bd);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preview-top-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--grey);
+      flex: 1;
+    }
+
+    .preview-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── EDIT TOOLBAR ── */
+    .edit-toolbar {
+      padding: 6px 12px;
+      background: var(--white);
+      border-bottom: 1px solid var(--bd);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .edit-toolbar.show {
+      display: flex;
+    }
+
+    .edit-btn {
+      padding: 4px 7px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: var(--f);
+      font-weight: 500;
+      border: 1px solid var(--bd);
+      background: var(--white);
+      color: var(--grey);
+      cursor: pointer;
+      transition: all 0.12s;
+      line-height: 1.3;
+    }
+
+    .edit-btn:hover {
+      border-color: var(--yellow);
+      background: var(--yellow-light);
+    }
+
+    .edit-sep {
+      width: 1px;
+      height: 14px;
+      background: var(--bd);
+      margin: 0 2px;
+    }
+
+    .edit-select {
+      padding: 4px 6px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-family: var(--f);
+      border: 1px solid var(--bd);
+      background: var(--white);
+      color: var(--grey);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .edit-indicator {
+      font-size: 10px;
+      color: var(--grey2);
+      padding: 2px 8px;
+      background: rgba(245, 216, 0, 0.2);
+      border-radius: 10px;
+      border: 1px solid rgba(245, 216, 0, 0.4);
+      margin-left: auto;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bd);
+      border-radius: 10px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadein {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ════════════════════════════════════════
+       PDF PAGE  (used both in preview & export)
+       ════════════════════════════════════════ */
+    .pdf-page {
+      width: 794px;
+      min-height: 1123px;
+      background: #fff;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      font-family: 'DM Sans', Arial, sans-serif;
+      overflow: hidden;
+      flex-shrink: 0;
+      animation: fadein 0.2s ease;
+    }
+
+    .pdf-hd {
+      padding: 18px 32px 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--layout-accent, #F5D800);
+      flex-shrink: 0;
+    }
+
+    .pdf-hd-right {
+      text-align: right;
+      font-size: 9px;
+      color: #9B9BAE;
+      line-height: 1.7;
+      padding-top: 4px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-hd-right strong {
+      display: block;
+      font-size: 10px;
+      color: #3D3D52;
+      font-weight: 600;
+    }
+
+    .pdf-bd {
+      flex: 1;
+      padding: 22px 32px 18px;
+      font-size: 10.5px;
+      color: #3D3D52;
+      line-height: 1.75;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-doc-type {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #9B9BAE;
+      margin-bottom: 4px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #3D3D52;
+      margin: 0 0 8px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd .pdf-meta {
+      display: flex;
+      gap: 14px;
+      font-size: 8.5px;
+      color: #9B9BAE;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid #F5D800;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd .pdf-meta span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .pdf-bd h2 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3D3D52;
+      margin: 18px 0 5px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #E4E4EE;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd h3 {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #3D3D52;
+      margin: 12px 0 3px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd p {
+      margin-bottom: 6px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd ul {
+      margin: 4px 0 7px 15px;
+    }
+
+    .pdf-bd li {
+      margin-bottom: 2px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd ol {
+      margin: 4px 0 7px 15px;
+    }
+
+    .pdf-bd table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+      font-size: 9.5px;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd table th {
+      background: #F5D800;
+      color: #3D3D52;
+      padding: 5px 8px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .pdf-bd table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid #E4E4EE;
+    }
+
+    .pdf-bd table tr:nth-child(even) td {
+      background: #FAFAFA;
+    }
+
+    .pdf-ft {
+      padding: 7px 32px 8px;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #E4E4EE;
+      min-height: 36px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #fff;
+    }
+
+    .pdf-ft-url {
+      font-size: 7.5px;
+      font-weight: 700;
+      color: #2C4965;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-ft-page {
+      font-size: 8px;
+      font-weight: 700;
+      color: #2C4965;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-ft-deco {
+      position: absolute;
+      right: -3px;
+      bottom: -2px;
+    }
+
+    .pdf-classif {
+      font-size: 7px;
+      color: #29CF00;
+      text-align: center;
+      padding: 3px 32px 4px;
+      background: #fff;
+      letter-spacing: 0.15px;
+      border-top: 1px solid #F0F0F0;
+      flex-shrink: 0;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .pdf-bd h1,
+    .pdf-bd h2,
+    .pdf-bd h3 {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    .pdf-bd table,
+    .pdf-bd tr,
+    .pdf-bd img,
+    .pdf-ft,
+    .pdf-classif {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  </style>
 </head>
+
 <body>
 
 <!-- TOPBAR -->
@@ -231,7 +842,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
   </div>
   <div class="topbar-div"></div>
   <div class="topbar-right">
-        <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
+    <button class="btn btn-secondary" id="downloadBtn" onclick="downloadPDF()" style="display:none">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg>
       Télécharger PDF
     </button>
@@ -317,7 +928,7 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
           Générer le contenu
         </div>
         <textarea class="ai-textarea" id="aiPrompt" placeholder="Décrivez le document à créer…&#10;Ex : Rapport d'audit réseau du site de Lyon, infrastructure Cisco, 3 VLANs…" rows="3"></textarea>
-        <div class="ai-input-row" style="margin-top:6px">
+        <div class="ai-input-row">
           <button class="btn btn-primary" style="font-size:11px;flex:1" onclick="generateWithAI()">
             <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l2.5 6L2 14l12-6z" fill="currentColor"/></svg>
             Générer
@@ -418,15 +1029,12 @@ body{font-family:var(--f);background:var(--bg);color:var(--grey);min-height:100v
 
 <script>
 /* ═══════════════════════════════════════
-   ⚠️  CLÉ API GEMINI — VISIBLE CÔTÉ CLIENT
+   ⚠️  CLÉ API GEMINI
    ───────────────────────────────────────
-   Cette clé est lisible par quiconque ouvre la page ou le code source.
-   À n'utiliser QUE si :
-     • le dépôt GitHub est PRIVÉ (sinon la clé fuit et Google la révoque),
-     • l'accès au site est protégé (mot de passe Vercel / SSO / VPN Colas).
-   Récupère ta clé sur https://aistudio.google.com  → « Get API key ».
+   Remplace par ta clé depuis https://aistudio.google.com/apikey
+   À n'utiliser QUE si le dépôt est PRIVÉ ou l'accès protégé.
 ════════════════════════════════════════ */
-const GEMINI_KEY = "AQ.Ab8RN6IYHtNUUaGplPSn4yhKS1aVyoTrkGLW1ivABVP58FMQ"; // ex : "AIzaSy........................"
+const GEMINI_KEY = "AQ.Ab8RN6IYHtNU-UaGplPSn4yhKS1aVyoTrkGLW1ivABVP_58FMQ";
 
 /* ═══════════════════════════════════════
    STATE
@@ -437,14 +1045,34 @@ let sectionIdCounter = 0;
 let editMode = false;
 
 const DOC_TYPE_LABELS = {
-  rapport:'Rapport technique', procedure:'Procédure', note:'Note de service',
-  cr:'Compte-rendu', spec:'Spécification', guide:'Guide utilisateur'
+  rapport: 'Rapport technique',
+  procedure: 'Procédure',
+  note: 'Note de service',
+  cr: 'Compte-rendu',
+  spec: 'Spécification',
+  guide: 'Guide utilisateur'
 };
+
+const SYSTEM_PROMPT = `Tu es un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
+
+Réponds UNIQUEMENT avec un JSON valide (aucun texte avant/après, aucun markdown) :
+{
+  "title": "Titre du document",
+  "sections": [
+    { "level": 1, "title": "Titre section", "content": "HTML simple : <p>, <ul><li>, <strong>, <em>, <table>" }
+  ]
+}
+
+Règles :
+- Français professionnel et technique
+- Minimum 4 sections substantielles avec contenu réaliste
+- Tableaux quand pertinent
+- Contenu HTML simple uniquement (<p> <ul> <li> <strong> <em> <table> <tr> <th> <td>)`;
 
 /* ═══════════════════════════════════════
    INIT
 ════════════════════════════════════════ */
-(function init(){
+(function init() {
   const today = new Date();
   document.getElementById('docDate').value = today.toISOString().split('T')[0];
   addSection(1, 'Introduction', '<p>Présentation du contexte et des objectifs du document.</p>');
@@ -458,42 +1086,48 @@ const DOC_TYPE_LABELS = {
 /* ═══════════════════════════════════════
    DOC TYPE
 ════════════════════════════════════════ */
-function selectDocType(el){
-  document.querySelectorAll('.doc-type').forEach(d=>d.classList.remove('active'));
+function selectDocType(el) {
+  document.querySelectorAll('.doc-type').forEach(d => d.classList.remove('active'));
   el.classList.add('active');
-  currentDocType=el.dataset.type;
-  document.getElementById('previewDocType').textContent=DOC_TYPE_LABELS[currentDocType];
+  currentDocType = el.dataset.type;
+  document.getElementById('previewDocType').textContent = DOC_TYPE_LABELS[currentDocType];
 }
 
 /* ═══════════════════════════════════════
    SECTIONS
 ════════════════════════════════════════ */
-function addSection(level=1, title='', content=''){
-  const id=++sectionIdCounter;
-  sections.push({id,level,title,content});
+function addSection(level = 1, title = '', content = '') {
+  const id = ++sectionIdCounter;
+  sections.push({ id, level, title, content });
   renderSections();
   return id;
 }
-function removeSection(id){
-  sections=sections.filter(s=>s.id!==id);
+
+function removeSection(id) {
+  sections = sections.filter(s => s.id !== id);
   renderSections();
 }
-function toggleLevel(id){
-  const s=sections.find(s=>s.id===id);
-  if(s){s.level=s.level===1?2:1;renderSections();}
+
+function toggleLevel(id) {
+  const s = sections.find(s => s.id === id);
+  if (s) { s.level = s.level === 1 ? 2 : 1; renderSections(); }
 }
-function renderSections(){
-  const list=document.getElementById('sectionsList');
-  const count=document.getElementById('sectionsCount');
-  count.textContent=sections.length+' section'+(sections.length>1?'s':'');
-  if(!sections.length){list.innerHTML='<div style="font-size:12px;color:var(--grey3);text-align:center;padding:14px 0;">Aucune section</div>';return;}
-  list.innerHTML=sections.map(s=>`
+
+function renderSections() {
+  const list = document.getElementById('sectionsList');
+  const count = document.getElementById('sectionsCount');
+  count.textContent = sections.length + ' section' + (sections.length > 1 ? 's' : '');
+  if (!sections.length) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--grey3);text-align:center;padding:14px 0;">Aucune section</div>';
+    return;
+  }
+  list.innerHTML = sections.map(s => `
     <div class="section-item" data-id="${s.id}">
       <div class="section-item-header">
         <span class="section-drag">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/><line x1="3" y1="15" x2="21" y2="15" stroke="currentColor" stroke-width="2"/></svg>
         </span>
-        <span class="section-level ${s.level===1?'l1':''}" onclick="toggleLevel(${s.id})" title="Cliquer pour changer le niveau">H${s.level}</span>
+        <span class="section-level ${s.level === 1 ? 'l1' : ''}" onclick="toggleLevel(${s.id})" title="Cliquer pour changer le niveau">H${s.level}</span>
         <input class="section-title-input" value="${escHtml(s.title)}" placeholder="Titre de la section" onchange="updateSection(${s.id},'title',this.value)"/>
         <span class="section-del" onclick="removeSection(${s.id})">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/></svg>
@@ -504,50 +1138,56 @@ function renderSections(){
       </div>
     </div>`).join('');
 }
-function updateSection(id, field, val){
-  const s=sections.find(s=>s.id===id);
-  if(s) s[field]=val;
+
+function updateSection(id, field, val) {
+  const s = sections.find(s => s.id === id);
+  if (s) s[field] = val;
 }
-function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function escHtml(s) {
+  return (s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 /* ═══════════════════════════════════════
    LIVE TITLE
 ════════════════════════════════════════ */
-function liveUpdateTitle(){
-  const page=document.querySelector('.pdf-page');
-  if(!page) return;
-  const h1=page.querySelector('.pdf-bd h1');
-  if(h1) h1.textContent=document.getElementById('docTitle').value||'Sans titre';
+function liveUpdateTitle() {
+  const page = document.querySelector('.pdf-page');
+  if (!page) return;
+  const h1 = page.querySelector('.pdf-bd h1');
+  if (h1) h1.textContent = document.getElementById('docTitle').value || 'Sans titre';
 }
 
 /* ═══════════════════════════════════════
    BUILD PDF PAGE (DOM)
 ════════════════════════════════════════ */
-function buildPDFPage(){
-  const title=document.getElementById('docTitle').value||'Sans titre';
-  const author=document.getElementById('docAuthor').value||'Colas Digital Solutions';
-  const ref=document.getElementById('docRef').value;
-  const dateRaw=document.getElementById('docDate').value;
-  const dateStr=dateRaw?new Date(dateRaw+'T12:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}):new Date().toLocaleDateString('fr-FR');
-  const typeLabel=DOC_TYPE_LABELS[currentDocType]||currentDocType;
+function buildPDFPage() {
+  const title = document.getElementById('docTitle').value || 'Sans titre';
+  const author = document.getElementById('docAuthor').value || 'Colas Digital Solutions';
+  const ref = document.getElementById('docRef').value;
+  const dateRaw = document.getElementById('docDate').value;
+  const dateStr = dateRaw ? new Date(dateRaw + 'T12:00').toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('fr-FR');
+  const typeLabel = DOC_TYPE_LABELS[currentDocType] || currentDocType;
 
-  // Sync section content from DOM textareas before reading sections[]
-  document.querySelectorAll('.section-item').forEach(el=>{
-    const id=parseInt(el.dataset.id);
-    const s=sections.find(s=>s.id===id);
-    if(!s) return;
-    const ti=el.querySelector('.section-title-input');
-    const ci=el.querySelector('.section-content-input');
-    if(ti) s.title=ti.value;
-    if(ci) s.content=ci.value;
+  document.querySelectorAll('.section-item').forEach(el => {
+    const id = parseInt(el.dataset.id);
+    const s = sections.find(s => s.id === id);
+    if (!s) return;
+    const ti = el.querySelector('.section-title-input');
+    const ci = el.querySelector('.section-content-input');
+    if (ti) s.title = ti.value;
+    if (ci) s.content = ci.value;
   });
 
-  /* ── LOGO : SVG fallback ou image extraite de la mise en page ── */
   let colasSVG;
-  if(window._layoutLogoB64){
-    colasSVG=`<img src="data:image/png;base64,${window._layoutLogoB64}" style="height:44px;width:auto;display:block;" alt="Logo"/>`;
+  if (window._layoutLogoB64) {
+    colasSVG = `<img src="data:image/png;base64,${window._layoutLogoB64}" style="height:44px;width:auto;display:block;" alt="Logo"/>`;
   } else {
-    colasSVG=`<svg width="135" height="44" viewBox="0 0 310 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+    colasSVG = `<svg width="135" height="44" viewBox="0 0 310 104" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 6 L90 6 L70 52 L0 52 Z" fill="#F5D800"/>
       <path d="M72 6 L100 6 L80 52 L52 52 Z" fill="#E31E24"/>
       <path d="M92 6 L120 6 L100 52 L72 52 Z" fill="#F5D800"/>
@@ -556,20 +1196,20 @@ function buildPDFPage(){
     </svg>`;
   }
 
-  const footerDeco=`<svg width="56" height="40" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
+  const footerDeco = `<svg width="56" height="40" viewBox="0 0 72 50" fill="none"><line x1="72" y1="0" x2="10" y2="50" stroke="#F5D800" stroke-width="14" stroke-linecap="round"/><line x1="72" y1="18" x2="22" y2="58" stroke="#F5D800" stroke-width="8" stroke-linecap="round"/></svg>`;
 
-  const sectionsHTML=sections.map(s=>{
-    const tag=s.level===1?'h2':'h3';
-    return `<${tag}>${s.title||'Section sans titre'}</${tag}>${s.content||''}`;
+  const sectionsHTML = sections.map(s => {
+    const tag = s.level === 1 ? 'h2' : 'h3';
+    return `<${tag}>${s.title || 'Section sans titre'}</${tag}>${s.content || ''}`;
   }).join('');
 
-  const page=document.createElement('div');
-  page.className='pdf-page';
-  page.innerHTML=`
+  const page = document.createElement('div');
+  page.className = 'pdf-page';
+  page.innerHTML = `
     <div class="pdf-hd">
       ${colasSVG}
       <div class="pdf-hd-right">
-        ${ref?`<strong>Réf. ${ref}</strong>`:''}
+        ${ref ? `<strong>Réf. ${ref}</strong>` : ''}
         ${dateStr}<br>${author}
       </div>
     </div>
@@ -579,7 +1219,7 @@ function buildPDFPage(){
       <div class="pdf-meta">
         <span><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#9B9BAE" stroke-width="2"/><line x1="3" y1="10" x2="21" y2="10" stroke="#9B9BAE" stroke-width="2"/></svg>${dateStr}</span>
         <span><svg width="8" height="8" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#9B9BAE" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="#9B9BAE" stroke-width="2"/></svg>${author}</span>
-        ${ref?`<span>Réf. ${ref}</span>`:''}
+        ${ref ? `<span>Réf. ${ref}</span>` : ''}
       </div>
       ${sectionsHTML}
     </div>
@@ -596,397 +1236,369 @@ function buildPDFPage(){
 /* ═══════════════════════════════════════
    REFRESH PREVIEW
 ════════════════════════════════════════ */
-function refreshPreview(){
-  const scroll=document.getElementById('previewScroll');
-  const placeholder=document.getElementById('previewPlaceholder');
-  if(placeholder) placeholder.remove();
+function refreshPreview() {
+  const scroll = document.getElementById('previewScroll');
+  const placeholder = document.getElementById('previewPlaceholder');
+  if (placeholder) placeholder.remove();
 
-  const old=scroll.querySelector('.pdf-page');
-  if(old && editMode){
-    editMode=false;
+  const old = scroll.querySelector('.pdf-page');
+  if (old && editMode) {
+    editMode = false;
     document.getElementById('editToolbar').classList.remove('show');
     document.getElementById('editToggleBtn').classList.remove('btn-primary');
     document.getElementById('editToggleBtn').classList.add('btn-secondary');
   }
-  if(old) old.remove();
+  if (old) old.remove();
 
-  const page=buildPDFPage();
+  const page = buildPDFPage();
   scroll.appendChild(page);
-  document.getElementById('downloadBtn').style.display='';
+  document.getElementById('downloadBtn').style.display = '';
 }
 
 /* ═══════════════════════════════════════
    EDIT MODE
 ════════════════════════════════════════ */
-function toggleEditMode(){
-  editMode=!editMode;
-  const toolbar=document.getElementById('editToolbar');
-  const btn=document.getElementById('editToggleBtn');
-  const page=document.querySelector('.pdf-page');
-  const bd=page?page.querySelector('.pdf-bd'):null;
+function toggleEditMode() {
+  editMode = !editMode;
+  const toolbar = document.getElementById('editToolbar');
+  const btn = document.getElementById('editToggleBtn');
+  const page = document.querySelector('.pdf-page');
+  const bd = page ? page.querySelector('.pdf-bd') : null;
 
-  if(editMode){
+  if (editMode) {
     toolbar.classList.add('show');
     btn.classList.add('btn-primary');
     btn.classList.remove('btn-secondary');
-    if(bd){bd.contentEditable='true';bd.focus();}
+    if (bd) { bd.contentEditable = 'true'; bd.focus(); }
   } else {
     toolbar.classList.remove('show');
     btn.classList.remove('btn-primary');
     btn.classList.add('btn-secondary');
-    if(bd) bd.contentEditable='false';
+    if (bd) bd.contentEditable = 'false';
   }
 }
-function fmtCmd(cmd,val){ document.execCommand(cmd,false,val||null); }
+
+function fmtCmd(cmd, val) {
+  document.execCommand(cmd, false, val || null);
+}
 
 /* ═══════════════════════════════════════
    PDF DOWNLOAD
 ════════════════════════════════════════ */
-async function downloadPDF(){
-  let page=document.querySelector('.pdf-page');
-  if(!page){
+async function downloadPDF() {
+  let page = document.querySelector('.pdf-page');
+  if (!page) {
     refreshPreview();
-    page=document.querySelector('.pdf-page');
+    page = document.querySelector('.pdf-page');
   }
-  if(!page){alert('Aucun document à générer.');return;}
+  if (!page) { alert('Aucun document à générer.'); return; }
 
-  const allBtns=[document.getElementById('downloadBtn'),document.getElementById('dlBtnPreview')];
-  allBtns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';}});
+  const allBtns = [document.getElementById('downloadBtn'), document.getElementById('dlBtnPreview')];
+  allBtns.forEach(b => {
+    if (b) {
+      b.disabled = true;
+      b.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> PDF…';
+    }
+  });
 
-  const restoreBtns=()=>{
-    allBtns.forEach(b=>{
-      if(b){
-        b.disabled=false;
-        const isTopbar=b.id==='downloadBtn';
-        b.innerHTML=isTopbar?
+  const restoreBtns = () => {
+    allBtns.forEach(b => {
+      if (b) {
+        b.disabled = false;
+        const isTopbar = b.id === 'downloadBtn';
+        b.innerHTML = isTopbar ?
           '<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> Télécharger PDF'
-          :'<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> PDF';
+          : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke="currentColor" stroke-width="2"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/></svg> PDF';
       }
     });
   };
 
-  try{
-    // Clone propre, sans zones éditables
-    const clone=page.cloneNode(true);
-    clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  try {
+    const clone = page.cloneNode(true);
+    clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
 
-    // Découpe les morceaux réutilisés sur chaque page
-    const headerEl=clone.querySelector('.pdf-hd');
-    const bodyEl=clone.querySelector('.pdf-bd');
-    const ftEl=clone.querySelector('.pdf-ft');
-    const clEl=clone.querySelector('.pdf-classif');
+    const headerEl = clone.querySelector('.pdf-hd');
+    const bodyEl = clone.querySelector('.pdf-bd');
+    const ftEl = clone.querySelector('.pdf-ft');
+    const clEl = clone.querySelector('.pdf-classif');
 
-    const headerHTML=headerEl?headerEl.outerHTML:'';
-    const bodyInnerHTML=bodyEl?bodyEl.innerHTML:'';
-    // Modèle de pied de page (pied + bandeau de classification) cloné sur chaque page
-    const footWrap=document.createElement('div');
-    footWrap.className='print-footer';
-    if(ftEl) footWrap.appendChild(ftEl.cloneNode(true));
-    if(clEl) footWrap.appendChild(clEl.cloneNode(true));
-    const footerHTML=footWrap.outerHTML;
+    const headerHTML = headerEl ? headerEl.outerHTML : '';
+    const bodyInnerHTML = bodyEl ? bodyEl.innerHTML : '';
+    const footWrap = document.createElement('div');
+    footWrap.className = 'print-footer';
+    if (ftEl) footWrap.appendChild(ftEl.cloneNode(true));
+    if (clEl) footWrap.appendChild(clEl.cloneNode(true));
+    const footerHTML = footWrap.outerHTML;
 
-    // Récupère TOUS les styles de la page (PDF identique à l'aperçu)
-    let css='';
-    document.querySelectorAll('style').forEach(s=>{css+=s.textContent+'\n';});
+    let css = '';
+    document.querySelectorAll('style').forEach(s => { css += s.textContent + '\n'; });
 
-    const rawTitle=(document.getElementById('docTitle').value||'document').trim()||'document';
-    const safeTitle=rawTitle.replace(/[^a-zA-Z0-9\-_ àâäéèêëïîôöùûüçÀÂÄÉÈÊËÏÎÔÖÙÛÜÇ]/g,'').trim()||'document';
+    const rawTitle = (document.getElementById('docTitle').value || 'document').trim() || 'document';
+    const safeTitle = rawTitle.replace(/[^a-zA-Z0-9\-_ àâäéèêëïîôöùûüçÀÂÄÉÈÊËÏÎÔÖÙÛÜÇ]/g, '').trim() || 'document';
 
-    const printHTML=
-      '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">'+
-      '<title>'+safeTitle+'</title>'+
-      '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">'+
-      '<style>'+css+'</style>'+
-      '<style>'+
-      '@page{ size:A4; margin:0; }'+
-      'html,body{ margin:0; padding:0; background:#fff; }'+
-      '*{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }'+
-      /* chaque page A4 réelle : entête (1re page) + corps + pied numéroté */
-      '.print-page{ width:210mm; height:297mm; margin:0 auto; background:#fff; box-sizing:border-box;'+
-      '  overflow:hidden; display:flex; flex-direction:column; break-after:page; page-break-after:always; }'+
-      '.print-page:last-child{ break-after:auto; page-break-after:auto; }'+
-      '.print-page .pdf-bd{ flex:0 0 auto; min-height:0; }'+
-      '.print-footer{ margin-top:auto; }'+
-      '.print-footer .pdf-ft{ flex-shrink:0; }'+
-      '.pdf-ft-page{ display:inline !important; }'+
-      '.pdf-page{ box-shadow:none !important; border-radius:0 !important; }'+
-      '</style></head><body>'+
-      '<div id="srcBody" style="position:absolute;left:-9999px;top:0;width:210mm;">'+bodyInnerHTML+'</div>'+
-      '<div id="printRoot"></div>'+
+    const printHTML =
+      '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">' +
+      '<title>' + safeTitle + '</title>' +
+      '<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">' +
+      '<style>' + css + '</style>' +
+      '<style>' +
+      '@page{ size:A4; margin:0; }' +
+      'html,body{ margin:0; padding:0; background:#fff; }' +
+      '*{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }' +
+      '.print-page{ width:210mm; height:297mm; margin:0 auto; background:#fff; box-sizing:border-box; overflow:hidden; display:flex; flex-direction:column; break-after:page; page-break-after:always; }' +
+      '.print-page:last-child{ break-after:auto; page-break-after:auto; }' +
+      '.print-page .pdf-bd{ flex:0 0 auto; min-height:0; }' +
+      '.print-footer{ margin-top:auto; }' +
+      '.print-footer .pdf-ft{ flex-shrink:0; }' +
+      '.pdf-ft-page{ display:inline !important; }' +
+      '.pdf-page{ box-shadow:none !important; border-radius:0 !important; }' +
+      '</style></head><body>' +
+      '<div id="srcBody" style="position:absolute;left:-9999px;top:0;width:210mm;">' + bodyInnerHTML + '</div>' +
+      '<div id="printRoot"></div>' +
       '</body></html>';
 
-    // iframe hors écran MAIS avec une vraie taille (sinon aucune mise en page
-    // n'est calculée et les mesures de hauteur sont nulles)
-    const iframe=document.createElement('iframe');
-    iframe.style.cssText='position:fixed;left:-10000px;top:0;width:850px;height:1200px;border:0;';
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-10000px;top:0;width:850px;height:1200px;border:0;';
     document.body.appendChild(iframe);
 
-    const idoc=iframe.contentWindow.document;
+    const idoc = iframe.contentWindow.document;
     idoc.open(); idoc.write(printHTML); idoc.close();
-    const win=iframe.contentWindow, doc=win.document;
+    const win = iframe.contentWindow, doc = idoc;
 
-    // Attendre chargement + polices avant de mesurer (les hauteurs en dépendent)
-    await new Promise(res=>{
-      if(doc.readyState==='complete') res();
-      else win.addEventListener('load',res,{once:true});
+    await new Promise(res => {
+      if (doc.readyState === 'complete') res();
+      else win.addEventListener('load', res, { once: true });
     });
-    try{ if(doc.fonts && doc.fonts.ready) await doc.fonts.ready; }catch(e){}
-    await new Promise(r=>setTimeout(r,200));
+    try { if (doc.fonts && doc.fonts.ready) await doc.fonts.ready; } catch (e) { }
+    await new Promise(r => setTimeout(r, 200));
 
-    const printRoot=doc.getElementById('printRoot');
-    const srcBody=doc.getElementById('srcBody');
-    const blocks=Array.from(srcBody.children);
+    const printRoot = doc.getElementById('printRoot');
+    const srcBody = doc.getElementById('srcBody');
+    const blocks = Array.from(srcBody.children);
 
-    // ── Mesure des hauteurs réelles (page, entête, pied) ──
-    const probe=doc.createElement('div');
-    probe.className='print-page';
-    probe.innerHTML=headerHTML+'<div class="pdf-bd"></div>'+footerHTML;
+    const probe = doc.createElement('div');
+    probe.className = 'print-page';
+    probe.innerHTML = headerHTML + '<div class="pdf-bd"></div>' + footerHTML;
     printRoot.appendChild(probe);
-    let pageH=probe.getBoundingClientRect().height;
-    let hH=probe.querySelector('.pdf-hd')?probe.querySelector('.pdf-hd').getBoundingClientRect().height:0;
-    let fH=probe.querySelector('.print-footer')?probe.querySelector('.print-footer').getBoundingClientRect().height:0;
+    let pageH = probe.getBoundingClientRect().height;
+    let hH = probe.querySelector('.pdf-hd') ? probe.querySelector('.pdf-hd').getBoundingClientRect().height : 0;
+    let fH = probe.querySelector('.print-footer') ? probe.querySelector('.print-footer').getBoundingClientRect().height : 0;
     printRoot.removeChild(probe);
 
-    // Garde-fous : si une mesure échoue, on retombe sur les valeurs A4 @96dpi
-    if(!pageH || pageH<500) pageH=1122;          // 297mm ≈ 1122px
-    if(!hH || hH<0 || hH>pageH) hH=0;
-    if(!fH || fH<0 || fH>pageH) fH=70;
+    if (!pageH || pageH < 500) pageH = 1122;
+    if (!hH || hH < 0 || hH > pageH) hH = 0;
+    if (!fH || fH < 0 || fH > pageH) fH = 70;
 
-    const avail1=Math.max(200, Math.floor(pageH-hH-fH-2));   // espace corps page 1 (avec entête)
-    const availN=Math.max(200, Math.floor(pageH-fH-2));       // espace corps pages suivantes
+    const avail1 = Math.max(200, Math.floor(pageH - hH - fH - 2));
+    const availN = Math.max(200, Math.floor(pageH - fH - 2));
 
-    function newPage(withHeader){
-      const p=doc.createElement('div');
-      p.className='print-page';
-      p.innerHTML=(withHeader?headerHTML:'')+'<div class="pdf-bd page-body"></div>'+footerHTML;
+    function newPage(withHeader) {
+      const p = doc.createElement('div');
+      p.className = 'print-page';
+      p.innerHTML = (withHeader ? headerHTML : '') + '<div class="pdf-bd page-body"></div>' + footerHTML;
       printRoot.appendChild(p);
-      const body=p.querySelector('.page-body');
-      const limit=withHeader?avail1:availN;
-      return {body,limit};
+      const body = p.querySelector('.page-body');
+      const limit = withHeader ? avail1 : availN;
+      return { body, limit };
     }
 
-    // ── Répartition des blocs sur les pages ──
-    // On laisse le corps grandir et on mesure sa hauteur réelle (offsetHeight)
-    let pg=newPage(true);
-    for(let i=0;i<blocks.length;i++){
-      const blk=blocks[i];
+    let pg = newPage(true);
+    for (let i = 0; i < blocks.length; i++) {
+      const blk = blocks[i];
       pg.body.appendChild(blk);
-      const isHead=(blk.tagName==='H2'||blk.tagName==='H3');
-      if(pg.body.offsetHeight>pg.limit){
-        // Ne tient pas : on bascule le bloc sur une nouvelle page
-        if(pg.body.children.length>1){
+      const isHead = (blk.tagName === 'H2' || blk.tagName === 'H3');
+      if (pg.body.offsetHeight > pg.limit) {
+        if (pg.body.children.length > 1) {
           pg.body.removeChild(blk);
-          pg=newPage(false);
+          pg = newPage(false);
           pg.body.appendChild(blk);
         }
-        // (si le bloc seul dépasse une page entière, on le laisse tel quel)
-      } else if(isHead && pg.body.offsetHeight>pg.limit-70 && i<blocks.length-1){
-        // Évite un titre orphelin tout en bas de page
+      } else if (isHead && pg.body.offsetHeight > pg.limit - 70 && i < blocks.length - 1) {
         pg.body.removeChild(blk);
-        pg=newPage(false);
+        pg = newPage(false);
         pg.body.appendChild(blk);
       }
     }
     srcBody.remove();
 
-    // ── Numérotation réelle « Page X / Y » ──
-    const pages=Array.from(printRoot.querySelectorAll('.print-page'));
-    const total=pages.length;
-    pages.forEach((p,idx)=>{
-      const num=p.querySelector('.pdf-ft-page');
-      if(num) num.textContent='Page '+(idx+1)+' / '+total;
+    const pages = Array.from(printRoot.querySelectorAll('.print-page'));
+    const total = pages.length;
+    pages.forEach((p, idx) => {
+      const num = p.querySelector('.pdf-ft-page');
+      if (num) num.textContent = 'Page ' + (idx + 1) + ' / ' + total;
     });
 
-    await new Promise(r=>setTimeout(r,60));
+    await new Promise(r => setTimeout(r, 60));
     win.focus();
     win.print();
 
-    // Nettoyage après la boîte de dialogue d'impression
-    setTimeout(()=>{ if(iframe.parentNode) document.body.removeChild(iframe); }, 1500);
-  } catch(err){
-    alert('Erreur lors de la génération : '+err.message);
+    setTimeout(() => { if (iframe.parentNode) document.body.removeChild(iframe); }, 1500);
+  } catch (err) {
+    alert('Erreur lors de la génération : ' + err.message);
   } finally {
     restoreBtns();
   }
 }
 
 /* ═══════════════════════════════════════
-   AI GENERATION — Google Gemini (appel direct client)
-   ───────────────────────────────────────
-   Plus de proxy /api/generate : on appelle Gemini directement
-   avec GEMINI_KEY (défini en haut du script).
+   AI GENERATION — Google Gemini
 ════════════════════════════════════════ */
-const SYSTEM_PROMPT=`Tu es un assistant expert en rédaction de documents professionnels pour Colas Digital Solutions.
-
-Réponds UNIQUEMENT avec un JSON valide (aucun texte avant/après, aucun markdown) :
-{
-  "title": "Titre du document",
-  "sections": [
-    { "level": 1, "title": "Titre section", "content": "HTML simple : <p>, <ul><li>, <strong>, <em>, <table>" }
-  ]
-}
-
-Règles :
-- Français professionnel et technique
-- Minimum 4 sections substantielles avec contenu réaliste
-- Tableaux quand pertinent
-- Contenu HTML simple uniquement (<p> <ul> <li> <strong> <em> <table> <tr> <th> <td>)`;
-
-async function generateWithAI(){
-  const prompt=document.getElementById('aiPrompt').value.trim();
-  const status=document.getElementById('aiStatus');
-  if(!prompt){status.innerHTML='<span style="color:var(--red)">Décrivez le document à générer</span>';return;}
-    if(!GEMINI_KEY){
-    status.innerHTML='<span style="color:var(--red)">Clé Gemini manquante — renseignez GEMINI_KEY en haut du script</span>';return;
+async function generateWithAI() {
+  const prompt = document.getElementById('aiPrompt').value.trim();
+  const status = document.getElementById('aiStatus');
+  if (!prompt) {
+    status.innerHTML = '<span style="color:var(--red)">Décrivez le document à générer</span>';
+    return;
+  }
+  if (!GEMINI_KEY || GEMINI_KEY === 'REMPLACE_PAR_TA_CLE_GEMINI') {
+    status.innerHTML = '<span style="color:var(--red)">Clé Gemini manquante — remplace GEMINI_KEY en haut du script</span>';
+    return;
   }
 
-  status.innerHTML='<span style="color:var(--grey2)">⏳ Génération en cours…</span>';
-  document.querySelector('.ai-box .btn-primary').disabled=true;
+  status.innerHTML = '<span style="color:var(--grey2)">⏳ Génération en cours…</span>';
+  document.querySelector('.ai-box .btn-primary').disabled = true;
 
-  try{
-    const res=await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':`Bearer ${GEMINI_KEY}`
-      },
-      body:JSON.stringify({
-        model:'gemini-3.6-flash',   // rapide et gratuit ; 'gemini-2.5-pro' pour + de qualité
-        messages:[
-          {role:'system',content:SYSTEM_PROMPT},
-          {role:'user',content:`Type: ${DOC_TYPE_LABELS[currentDocType]||currentDocType}\nDemande: ${prompt}`}
-        ],
-        max_tokens:8000,
-        temperature:0.4
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: [{
+          role: 'user',
+          parts: [{
+            text: `Type: ${DOC_TYPE_LABELS[currentDocType] || currentDocType}\nDemande: ${prompt}`
+          }]
+        }],
+        generationConfig: { maxOutputTokens: 8000, temperature: 0.4 }
       })
     });
 
-    if(!res.ok){
-      const t=await res.text().catch(()=>res.statusText);
+    if (!res.ok) {
+      const t = await res.text().catch(() => res.statusText);
       throw new Error(`API ${res.status} : ${t}`);
     }
 
-    const data=await res.json();
-    let raw=data.choices[0].message.content.trim().replace(/```json|```/g,'').trim();
-    // on ne garde que du premier { au dernier } (ignore un éventuel texte parasite)
-    const first=raw.indexOf('{'), last=raw.lastIndexOf('}');
-    if(first>=0 && last>first) raw=raw.slice(first,last+1);
-    const parsed=JSON.parse(raw);
-    
-    if(parsed.title) document.getElementById('docTitle').value=parsed.title;
-    if(parsed.sections&&parsed.sections.length){
-      sections=[];
-      sectionIdCounter=0;
-      parsed.sections.forEach(s=>addSection(s.level||1,s.title||'Section',s.content||''));
+    const data = await res.json();
+    let raw = data.candidates[0].content.parts[0].text.trim().replace(/```json|```/g, '').trim();
+    const first = raw.indexOf('{'), last = raw.lastIndexOf('}');
+    if (first >= 0 && last > first) raw = raw.slice(first, last + 1);
+    const parsed = JSON.parse(raw);
+
+    if (parsed.title) document.getElementById('docTitle').value = parsed.title;
+    if (parsed.sections && parsed.sections.length) {
+      sections = [];
+      sectionIdCounter = 0;
+      parsed.sections.forEach(s => addSection(s.level || 1, s.title || 'Section', s.content || ''));
     }
-    status.innerHTML='<span style="color:var(--green)">✓ Document généré — cliquez sur Actualiser</span>';
+    status.innerHTML = '<span style="color:var(--green)">✓ Document généré — cliquez sur Actualiser</span>';
     refreshPreview();
-  } catch(err){
-    const msg=err.message||'';
-    if(/401|403|API_KEY|unauthor|invalid/i.test(msg)) status.innerHTML='<span style="color:var(--red)">Clé Gemini invalide — vérifiez GEMINI_KEY</span>';
-    else if(msg.includes('429')) status.innerHTML='<span style="color:var(--red)">Quota atteint — réessayez dans quelques instants</span>';
-    else status.innerHTML=`<span style="color:var(--red)">Erreur : ${msg}</span>`;
+  } catch (err) {
+    const msg = err.message || '';
+    if (/401|403|API_KEY|unauthor|invalid/i.test(msg)) status.innerHTML = '<span style="color:var(--red)">Clé Gemini invalide — vérifiez GEMINI_KEY</span>';
+    else if (msg.includes('429')) status.innerHTML = '<span style="color:var(--red)">Quota atteint — réessayez dans quelques instants</span>';
+    else status.innerHTML = `<span style="color:var(--red)">Erreur : ${msg}</span>`;
   }
-  document.querySelector('.ai-box .btn-primary').disabled=false;
+  document.querySelector('.ai-box .btn-primary').disabled = false;
 }
 
 /* ═══════════════════════════════════════
    IMPORT WORD (.docx via mammoth.js)
 ════════════════════════════════════════ */
-function handleDragOver(e){e.preventDefault();document.getElementById('importZone').classList.add('drag-over');}
-function handleDragLeave(){document.getElementById('importZone').classList.remove('drag-over');}
-function handleDrop(e){
+function handleDragOver(e) { e.preventDefault(); document.getElementById('importZone').classList.add('drag-over'); }
+function handleDragLeave() { document.getElementById('importZone').classList.remove('drag-over'); }
+function handleDrop(e) {
   e.preventDefault();
   document.getElementById('importZone').classList.remove('drag-over');
-  const f=e.dataTransfer.files[0];
-  if(f) importWord(f);
+  const f = e.dataTransfer.files[0];
+  if (f) importWord(f);
 }
 
-async function importWord(file){
-  if(!file||!file.name.endsWith('.docx')){alert('Veuillez sélectionner un fichier .docx');return;}
-  const zone=document.getElementById('importZone');
-  zone.innerHTML='<div style="font-size:12px;color:var(--grey2)">⏳ Lecture du fichier…</div>';
+async function importWord(file) {
+  if (!file || !file.name.endsWith('.docx')) { alert('Veuillez sélectionner un fichier .docx'); return; }
+  const zone = document.getElementById('importZone');
+  zone.innerHTML = '<div style="font-size:12px;color:var(--grey2)">⏳ Lecture du fichier…</div>';
 
-  try{
-    const arrayBuffer=await file.arrayBuffer();
-    const result=await mammoth.convertToHtml({arrayBuffer});
-    const html=result.value;
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.convertToHtml({ arrayBuffer });
+    const html = result.value;
 
-    const tmp=document.createElement('div');
-    tmp.innerHTML=html;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
 
-    const firstH1=tmp.querySelector('h1');
-    if(firstH1) document.getElementById('docTitle').value=firstH1.textContent;
+    const firstH1 = tmp.querySelector('h1');
+    if (firstH1) document.getElementById('docTitle').value = firstH1.textContent;
 
-    const newSections=[];
-    let curSection=null;
-    let curContent='';
+    const newSections = [];
+    let curSection = null;
+    let curContent = '';
 
-    tmp.childNodes.forEach(node=>{
-      if(node.nodeType!==1) return;
-      const tag=node.tagName.toLowerCase();
-      if(tag==='h1'||tag==='h2'||tag==='h3'){
-        if(curSection){curSection.content=curContent;newSections.push(curSection);}
-        const level=(tag==='h1'||tag==='h2')?1:2;
-        curSection={level,title:node.textContent.trim()};
-        curContent='';
+    tmp.childNodes.forEach(node => {
+      if (node.nodeType !== 1) return;
+      const tag = node.tagName.toLowerCase();
+      if (tag === 'h1' || tag === 'h2' || tag === 'h3') {
+        if (curSection) { curSection.content = curContent; newSections.push(curSection); }
+        const level = (tag === 'h1' || tag === 'h2') ? 1 : 2;
+        curSection = { level, title: node.textContent.trim() };
+        curContent = '';
       } else {
-        if(!curSection) return;
-        curContent+=node.outerHTML||'';
+        if (!curSection) return;
+        curContent += node.outerHTML || '';
       }
     });
-    if(curSection){curSection.content=curContent;newSections.push(curSection);}
+    if (curSection) { curSection.content = curContent; newSections.push(curSection); }
 
-    if(newSections.length){
-      sections=[];
-      sectionIdCounter=0;
-      newSections.forEach(s=>addSection(s.level,s.title,s.content));
+    if (newSections.length) {
+      sections = [];
+      sectionIdCounter = 0;
+      newSections.forEach(s => addSection(s.level, s.title, s.content));
       refreshPreview();
-      zone.innerHTML=`<div class="import-zone-icon" style="background:var(--green);margin:0 auto 7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2"/></svg></div><div style="font-weight:600;font-size:12px;color:var(--green)">${newSections.length} sections importées</div>`;
+      zone.innerHTML = `<div class="import-zone-icon" style="background:var(--green);margin:0 auto 7px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2"/></svg></div><div style="font-weight:600;font-size:12px;color:var(--green)">${newSections.length} sections importées</div>`;
     } else {
-      zone.innerHTML='<div style="font-size:12px;color:var(--red)">Aucune section trouvée — vérifiez que le document contient des titres H1/H2/H3</div>';
+      zone.innerHTML = '<div style="font-size:12px;color:var(--red)">Aucune section trouvée — vérifiez que le document contient des titres H1/H2/H3</div>';
     }
-  } catch(err){
-    zone.innerHTML=`<div style="font-size:12px;color:var(--red)">Erreur : ${err.message}</div>`;
+  } catch (err) {
+    zone.innerHTML = `<div style="font-size:12px;color:var(--red)">Erreur : ${err.message}</div>`;
   }
-  setTimeout(()=>{
-    zone.innerHTML=`<div class="import-zone-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5-5 5 5M12 5v12" stroke="currentColor" stroke-width="1.8"/></svg></div><div style="font-weight:600;margin-bottom:2px">Importer un .docx</div><div style="font-size:10px">Glissez-déposez ou cliquez — le contenu remplace les sections</div>`;
-    zone.onclick=()=>document.getElementById('wordFileInput').click();
-  },3000);
+  setTimeout(() => {
+    zone.innerHTML = `<div class="import-zone-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5-5 5 5M12 5v12" stroke="currentColor" stroke-width="1.8"/></svg></div><div style="font-weight:600;margin-bottom:2px">Importer un .docx</div><div style="font-size:10px">Glissez-déposez ou cliquez — le contenu remplace les sections</div>`;
+    zone.onclick = () => document.getElementById('wordFileInput').click();
+  }, 3000);
 }
 
 /* ═══════════════════════════════════════
    IMPORT MISE EN PAGE (.docx)
 ════════════════════════════════════════ */
-function handleDragOver2(e){e.preventDefault();document.getElementById('layoutZone').classList.add('drag-over');}
-function handleDragLeave2(){document.getElementById('layoutZone').classList.remove('drag-over');}
-function handleDrop2(e){
+function handleDragOver2(e) { e.preventDefault(); document.getElementById('layoutZone').classList.add('drag-over'); }
+function handleDragLeave2() { document.getElementById('layoutZone').classList.remove('drag-over'); }
+function handleDrop2(e) {
   e.preventDefault();
   document.getElementById('layoutZone').classList.remove('drag-over');
-  const f=e.dataTransfer.files[0];
-  if(f) importLayout(f);
+  const f = e.dataTransfer.files[0];
+  if (f) importLayout(f);
 }
 
-async function importLayout(file){
-  if(!file||!file.name.endsWith('.docx')){alert('Veuillez sélectionner un fichier .docx');return;}
+async function importLayout(file) {
+  if (!file || !file.name.endsWith('.docx')) { alert('Veuillez sélectionner un fichier .docx'); return; }
 
-  const zone=document.getElementById('layoutZone');
-  const zoneIcon=document.getElementById('layoutZoneIcon');
-  const zoneTitle=document.getElementById('layoutZoneTitle');
-  const zoneDesc=document.getElementById('layoutZoneDesc');
+  const zone = document.getElementById('layoutZone');
+  const zoneIcon = document.getElementById('layoutZoneIcon');
+  const zoneTitle = document.getElementById('layoutZoneTitle');
+  const zoneDesc = document.getElementById('layoutZoneDesc');
 
-  zoneTitle.textContent='⏳ Lecture de la mise en page…';
-  zoneDesc.textContent='';
+  zoneTitle.textContent = '⏳ Lecture de la mise en page…';
+  zoneDesc.textContent = '';
 
-  try{
+  try {
     const arrayBuffer = await file.arrayBuffer();
     const logo = await extractLogoFromDocx(arrayBuffer);
 
-    if(logo){
+    if (logo) {
       window._layoutLogoB64 = logo;
       window._layoutFileName = file.name;
 
-      zoneIcon.innerHTML=`<img src="data:image/png;base64,${logo}" style="height:22px;width:auto;border-radius:3px;" alt="Logo"/>`;
+      zoneIcon.innerHTML = `<img src="data:image/png;base64,${logo}" style="height:22px;width:auto;border-radius:3px;" alt="Logo"/>`;
       zoneTitle.textContent = file.name;
       zoneDesc.textContent = '✓ Logo extrait — cliquez Actualiser';
       zoneDesc.style.color = 'var(--green)';
@@ -997,55 +1609,55 @@ async function importLayout(file){
       zoneDesc.textContent = 'Le document doit contenir une image dans son header';
       zoneDesc.style.color = 'var(--red)';
     }
-  } catch(err){
+  } catch (err) {
     zoneTitle.textContent = 'Erreur : ' + err.message;
     zoneDesc.textContent = '';
     zoneDesc.style.color = 'var(--red)';
   }
 
-  setTimeout(()=>{
-    if(!window._layoutLogoB64){
+  setTimeout(() => {
+    if (!window._layoutLogoB64) {
       resetLayoutZone();
     }
   }, 4000);
 }
 
-function resetLayoutZone(){
-  const zoneIcon=document.getElementById('layoutZoneIcon');
-  const zoneTitle=document.getElementById('layoutZoneTitle');
-  const zoneDesc=document.getElementById('layoutZoneDesc');
-  if(zoneIcon) zoneIcon.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>`;
-  if(zoneTitle) zoneTitle.textContent='Importer une mise en page .docx';
-  if(zoneDesc){ zoneDesc.textContent='Extrait le logo et la charte graphique du document Word'; zoneDesc.style.color=''; }
+function resetLayoutZone() {
+  const zoneIcon = document.getElementById('layoutZoneIcon');
+  const zoneTitle = document.getElementById('layoutZoneTitle');
+  const zoneDesc = document.getElementById('layoutZoneDesc');
+  if (zoneIcon) zoneIcon.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="10" width="18" height="11" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  if (zoneTitle) zoneTitle.textContent = 'Importer une mise en page .docx';
+  if (zoneDesc) { zoneDesc.textContent = 'Extrait le logo et la charte graphique du document Word'; zoneDesc.style.color = ''; }
 }
 
-/* ── Parser ZIP minimal en JS pur ── */
-function parseZip(bytes){
+/* ── Parser ZIP minimal ── */
+function parseZip(bytes) {
   const entries = [];
   let i = 0;
   const len = bytes.length;
 
-  while(i < len - 4){
-    if(bytes[i]===0x50 && bytes[i+1]===0x4B && bytes[i+2]===0x03 && bytes[i+3]===0x04){
-      const compressionMethod = bytes[i+8] | (bytes[i+9]<<8);
-      const compressedSize = bytes[i+18] | (bytes[i+19]<<8) | (bytes[i+20]<<16) | (bytes[i+21]<<24);
-      const uncompressedSize = bytes[i+22] | (bytes[i+23]<<8) | (bytes[i+24]<<16) | (bytes[i+25]<<24);
-      const fileNameLen = bytes[i+26] | (bytes[i+27]<<8);
-      const extraLen = bytes[i+28] | (bytes[i+29]<<8);
+  while (i < len - 4) {
+    if (bytes[i] === 0x50 && bytes[i + 1] === 0x4B && bytes[i + 2] === 0x03 && bytes[i + 3] === 0x04) {
+      const compressionMethod = bytes[i + 8] | (bytes[i + 9] << 8);
+      const compressedSize = bytes[i + 18] | (bytes[i + 19] << 8) | (bytes[i + 20] << 16) | (bytes[i + 21] << 24);
+      const uncompressedSize = bytes[i + 22] | (bytes[i + 23] << 8) | (bytes[i + 24] << 16) | (bytes[i + 25] << 24);
+      const fileNameLen = bytes[i + 26] | (bytes[i + 27] << 8);
+      const extraLen = bytes[i + 28] | (bytes[i + 29] << 8);
 
-      const nameBytes = bytes.slice(i+30, i+30+fileNameLen);
+      const nameBytes = bytes.slice(i + 30, i + 30 + fileNameLen);
       const name = new TextDecoder('utf-8').decode(nameBytes);
 
       const dataStart = i + 30 + fileNameLen + extraLen;
       const dataEnd = dataStart + compressedSize;
 
-      if(compressionMethod === 0){
+      if (compressionMethod === 0) {
         entries.push({ name, data: bytes.slice(dataStart, dataEnd) });
-      } else if(compressionMethod === 8){
-        try{
+      } else if (compressionMethod === 8) {
+        try {
           const compressed = bytes.slice(dataStart, dataEnd);
           entries.push({ name, data: null, compressed, uncompressedSize });
-        } catch(e){}
+        } catch (e) { }
       }
 
       i = dataEnd;
@@ -1056,8 +1668,7 @@ function parseZip(bytes){
   return entries;
 }
 
-/* ── Version async qui gère la décompression Deflate ── */
-async function extractLogoFromDocx(arrayBuffer){
+async function extractLogoFromDocx(arrayBuffer) {
   const bytes = new Uint8Array(arrayBuffer);
   const entries = parseZip(bytes);
 
@@ -1066,13 +1677,13 @@ async function extractLogoFromDocx(arrayBuffer){
     (e.name.endsWith('.png') || e.name.endsWith('.jpg') || e.name.endsWith('.jpeg'))
   );
 
-  if(!mediaEntries.length) return null;
+  if (!mediaEntries.length) return null;
 
-  for(const entry of mediaEntries){
+  for (const entry of mediaEntries) {
     let imgBytes = entry.data;
 
-    if(!imgBytes && entry.compressed){
-      try{
+    if (!imgBytes && entry.compressed) {
+      try {
         const ds = new DecompressionStream('deflate-raw');
         const writer = ds.writable.getWriter();
         const reader = ds.readable.getReader();
@@ -1082,29 +1693,29 @@ async function extractLogoFromDocx(arrayBuffer){
 
         const chunks = [];
         let totalLen = 0;
-        while(true){
-          const {done, value} = await reader.read();
-          if(done) break;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
           chunks.push(value);
           totalLen += value.length;
         }
 
         imgBytes = new Uint8Array(totalLen);
         let offset = 0;
-        for(const chunk of chunks){
+        for (const chunk of chunks) {
           imgBytes.set(chunk, offset);
           offset += chunk.length;
         }
-      } catch(e){
+      } catch (e) {
         continue;
       }
     }
 
-    if(imgBytes && imgBytes.length > 100){
+    if (imgBytes && imgBytes.length > 100) {
       let binary = '';
       const chunkSize = 8192;
-      for(let j=0; j<imgBytes.length; j+=chunkSize){
-        binary += String.fromCharCode(...imgBytes.slice(j, j+chunkSize));
+      for (let j = 0; j < imgBytes.length; j += chunkSize) {
+        binary += String.fromCharCode(...imgBytes.slice(j, j + chunkSize));
       }
       return btoa(binary);
     }
@@ -1112,7 +1723,7 @@ async function extractLogoFromDocx(arrayBuffer){
 
   return null;
 }
-
 </script>
+
 </body>
 </html>
